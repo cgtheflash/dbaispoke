@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "6808778046094167154"
+      "templateHash": "2490869464206493805"
     }
   },
   "parameters": {
@@ -366,11 +366,11 @@
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[2]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]"
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]"
       ]
     },
     {
@@ -1718,6 +1718,9 @@
           },
           "enableBlobPublicAccess": {
             "value": false
+          },
+          "publicNetworkAccess": {
+            "value": "[parameters('publicNetworkAccess')]"
           }
         },
         "template": {
@@ -1727,7 +1730,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "9002795499630448969"
+              "templateHash": "9307348333808168958"
             }
           },
           "parameters": {
@@ -1787,6 +1790,17 @@
                 "description": "Enable blob public access"
               }
             },
+            "publicNetworkAccess": {
+              "type": "string",
+              "defaultValue": "Disabled",
+              "allowedValues": [
+                "Enabled",
+                "Disabled"
+              ],
+              "metadata": {
+                "description": "Enable public network access"
+              }
+            },
             "tags": {
               "type": "object",
               "defaultValue": {},
@@ -1808,7 +1822,11 @@
               "kind": "[parameters('kind')]",
               "properties": {
                 "accessTier": "[parameters('accessTier')]",
-                "allowBlobPublicAccess": "[parameters('enableBlobPublicAccess')]"
+                "allowBlobPublicAccess": "[parameters('enableBlobPublicAccess')]",
+                "networkAcls": {
+                  "defaultAction": "[if(equals(parameters('publicNetworkAccess'), 'Enabled'), 'Allow', 'Deny')]",
+                  "bypass": "AzureServices"
+                }
               }
             }
           ],
