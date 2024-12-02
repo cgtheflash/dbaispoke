@@ -2,11 +2,6 @@
 param name string
 
 @description('Location for resources')
-@allowed([
-  'westus'
-  'westus2'
-  'centralus'
-])
 param location string
 
 @description('Address prefix for the Virtual Network')

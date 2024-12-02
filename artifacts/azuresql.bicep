@@ -5,11 +5,6 @@ param serverName string
 param databaseName string
 
 @description('Location for resources')
-@allowed([
-  'westus'
-  'westus2'
-  'centralus'
-])
 param location string
 
 @description('Administrator username for the server')

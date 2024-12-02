@@ -2,11 +2,6 @@
 param name string
 
 @description('Location for resources')
-@allowed([
-  'westus'
-  'westus2'
-  'centralus'
-])
 param location string
 
 @description('Tags for the resources')

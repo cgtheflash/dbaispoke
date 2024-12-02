@@ -2,11 +2,6 @@
 param name string
 
 @description('Location for resources')
-@allowed([
-  'westus'
-  'westus2'
-  'centralus'
-])
 param location string
 
 @description('Resource ID of the subnet where the private endpoint will be created')

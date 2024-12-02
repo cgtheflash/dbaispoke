@@ -2,11 +2,6 @@
 param appgwName string = ''
 
 @description('Location for resources')
-@allowed([
-  'westus'
-  'westus2'
-  'centralus'
-])
 param location string
 
 @description('ID of the subnet for the Application Gateway')

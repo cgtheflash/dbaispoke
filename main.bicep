@@ -27,7 +27,6 @@ param tags object = {
   DeployedBy: 'Bicep'
 }
 
-param location string = 'westus2'
 param prefix string = 'demo'
 param vnetAddressPrefix string = '10.0.0.0/16'
 param appgwSubnetPrefix string = '10.0.0.0/24'
@@ -66,7 +65,7 @@ module asgs 'artifacts/asg.bicep' = [for asgName in asgNames: {
   name: 'asg-${asgName}'
   params: {
     name: asgName
-    location: location
+    location: resourceGroup().location
   }
 }]
 
@@ -75,7 +74,7 @@ module nsg 'artifacts/nsg.bicep' = {
   name: 'nsg-deployment'
   params: {
     name: '${prefix}-nsg'
-    location: location
+    location: resourceGroup().location
     tags: tags
     rules: [
       {
@@ -185,7 +184,7 @@ module routeTable 'artifacts/rt.bicep' = {
   name: 'rt-deployment'
   params: {
     name: '${prefix}-rt'
-    location: location
+    location: resourceGroup().location
     tags: tags
     routes: [
       {
@@ -203,7 +202,7 @@ module vnet 'artifacts/vnet.bicep' = {
   name: 'vnet-deployment'
   params: {
     name: vnetName
-    location: location
+    location: resourceGroup().location
     tags: tags
     addressPrefix: vnetAddressPrefix
     subnets: [for (subnet, i) in subnets: {
@@ -222,7 +221,7 @@ module vnet 'artifacts/vnet.bicep' = {
 // Create App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: '${prefix}-asp'
-  location: location
+  location: resourceGroup().location
   tags: tags
   sku: {
     name: appServiceSku
@@ -239,7 +238,7 @@ module appService 'artifacts/appservice.bicep' = {
   name: 'appservice-deployment'
   params: {
     name: '${prefix}-app'
-    location: location
+    location: resourceGroup().location
     tags: tags
     appServicePlanId: appServicePlan.id
     linuxFxVersion: 'dotnet:6'
@@ -253,7 +252,7 @@ module sqlServer 'artifacts/azuresql.bicep' = {
   params: {
     serverName: '${prefix}-sql'
     databaseName: '${prefix}-db'
-    location: location
+    location: resourceGroup().location
     tags: tags
     administratorLogin: 'sqladmin'
     administratorLoginPassword: sqlAdminPassword
@@ -268,7 +267,7 @@ module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = {
   name: 'sql-pe-deployment'
   params: {
     name: '${prefix}-sql-pe'
-    location: location
+    location: resourceGroup().location
     subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
     privateConnectResourceId: sqlServer.outputs.serverName
     groupId: 'sqlServer'
@@ -281,7 +280,7 @@ module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = {
   name: 'app-pe-deployment'
   params: {
     name: '${prefix}-app-pe'
-    location: location
+    location: resourceGroup().location
     subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
     privateConnectResourceId: appService.outputs.appServiceId
     groupId: 'sites'
@@ -294,7 +293,7 @@ module appGwPublicIp 'artifacts/publicIp.bicep' = {
   name: 'appgw-pip-deployment'
   params: {
     name: '${prefix}-appgw-pip'
-    location: location
+    location: resourceGroup().location
     tags: tags
   }
 }
@@ -304,7 +303,7 @@ module appGw 'artifacts/appgw.bicep' = {
   name: 'appgw-deployment'
   params: {
     appgwName: '${prefix}-appgw'
-    location: location
+    location: resourceGroup().location
     subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[0].name}'  // AppGW subnet
     skuName: 'Standard_v2'
     skuTier: 'Standard_v2'
@@ -368,7 +367,7 @@ module sqlBackupStorage 'artifacts/storageAccount.bicep' = {
   name: 'sql-backup-storage-deployment'
   params: {
     name: '${prefix}sqlbackups${environment}'  // Storage accounts must be globally unique
-    location: location
+    location: resourceGroup().location
     tags: tags
     skuName: 'Standard_LRS'
     kind: 'StorageV2'
@@ -380,7 +379,7 @@ module sqlBackupStoragePe 'artifacts/privateendpoint.bicep' = {
   name: 'sql-backup-pe-deployment'
   params: {
     name: '${prefix}-sqlbackup-pe'
-    location: location
+    location: resourceGroup().location
     subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
     privateConnectResourceId: sqlBackupStorage.outputs.storageAccountId
     groupId: 'blob'

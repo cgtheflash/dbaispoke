@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.30.23.60470",
-      "templateHash": "8905509235877513120"
+      "version": "0.31.92.45157",
+      "templateHash": "2056169658645365358"
     }
   },
   "parameters": {
@@ -50,10 +50,6 @@
       "metadata": {
         "description": "Tags for all resources"
       }
-    },
-    "location": {
-      "type": "string",
-      "defaultValue": "westus2"
     },
     "prefix": {
       "type": "string",
@@ -106,7 +102,7 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2022-03-01",
       "name": "[format('{0}-asp', parameters('prefix'))]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "tags": "[parameters('tags')]",
       "sku": {
         "name": "[parameters('appServiceSku')]",
@@ -135,7 +131,7 @@
             "value": "[variables('asgNames')[copyIndex()]]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           }
         },
         "template": {
@@ -144,8 +140,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "8956149493045274687"
+              "version": "0.31.92.45157",
+              "templateHash": "7344892603350170353"
             }
           },
           "parameters": {
@@ -157,11 +153,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -198,7 +189,7 @@
             "value": "[format('{0}-nsg', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -312,8 +303,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "697202431952384053"
+              "version": "0.31.92.45157",
+              "templateHash": "7447482285701420154"
             }
           },
           "parameters": {
@@ -325,11 +316,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -371,9 +357,9 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[2]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]"
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[2]))]"
       ]
     },
     {
@@ -390,7 +376,7 @@
             "value": "[format('{0}-rt', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -412,8 +398,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "14880276327365771561"
+              "version": "0.31.92.45157",
+              "templateHash": "11994471314819824718"
             }
           },
           "parameters": {
@@ -425,11 +411,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -496,7 +477,7 @@
             "value": "[variables('vnetName')]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -527,8 +508,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "10353745941295641562"
+              "version": "0.31.92.45157",
+              "templateHash": "13990543105835014758"
             }
           },
           "parameters": {
@@ -540,11 +521,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -634,7 +610,7 @@
             "value": "[format('{0}-app', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -655,8 +631,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "13320525321667519007"
+              "version": "0.31.92.45157",
+              "templateHash": "702886961050589663"
             }
           },
           "parameters": {
@@ -668,11 +644,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -783,7 +754,7 @@
             "value": "[format('{0}-db', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -810,8 +781,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "12109181704483617647"
+              "version": "0.31.92.45157",
+              "templateHash": "11571781774046743466"
             }
           },
           "parameters": {
@@ -829,11 +800,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -951,7 +917,7 @@
             "value": "[format('{0}-sql-pe', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "subnetId": {
             "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[1].name)]"
@@ -974,8 +940,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "406598545468928433"
+              "version": "0.31.92.45157",
+              "templateHash": "8637885887530619838"
             }
           },
           "parameters": {
@@ -987,11 +953,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -1128,7 +1089,7 @@
             "value": "[format('{0}-app-pe', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "subnetId": {
             "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[1].name)]"
@@ -1151,8 +1112,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "406598545468928433"
+              "version": "0.31.92.45157",
+              "templateHash": "8637885887530619838"
             }
           },
           "parameters": {
@@ -1164,11 +1125,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -1305,7 +1261,7 @@
             "value": "[format('{0}-appgw-pip', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -1317,8 +1273,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "16679180541890172044"
+              "version": "0.31.92.45157",
+              "templateHash": "12867371842773155717"
             }
           },
           "parameters": {
@@ -1330,11 +1286,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -1393,7 +1344,7 @@
             "value": "[format('{0}-appgw', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "subnetId": {
             "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[0].name)]"
@@ -1482,8 +1433,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "7860204174878081153"
+              "version": "0.31.92.45157",
+              "templateHash": "4887354340921334792"
             }
           },
           "parameters": {
@@ -1496,11 +1447,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -1716,7 +1662,7 @@
             "value": "[format('{0}sqlbackups{1}', parameters('prefix'), parameters('environment'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "tags": {
             "value": "[parameters('tags')]"
@@ -1737,8 +1683,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "1345722549492302713"
+              "version": "0.31.92.45157",
+              "templateHash": "9002795499630448969"
             }
           },
           "parameters": {
@@ -1750,11 +1696,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
@@ -1855,7 +1796,7 @@
             "value": "[format('{0}-sqlbackup-pe', parameters('prefix'))]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[resourceGroup().location]"
           },
           "subnetId": {
             "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[1].name)]"
@@ -1878,8 +1819,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.30.23.60470",
-              "templateHash": "406598545468928433"
+              "version": "0.31.92.45157",
+              "templateHash": "8637885887530619838"
             }
           },
           "parameters": {
@@ -1891,11 +1832,6 @@
             },
             "location": {
               "type": "string",
-              "allowedValues": [
-                "westus",
-                "westus2",
-                "centralus"
-              ],
               "metadata": {
                 "description": "Location for resources"
               }
