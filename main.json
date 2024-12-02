@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "2490869464206493805"
+      "templateHash": "6934632870753268292"
     }
   },
   "parameters": {
@@ -1730,7 +1730,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "9307348333808168958"
+              "templateHash": "6914130725487445092"
             }
           },
           "parameters": {
@@ -1825,7 +1825,7 @@
                 "allowBlobPublicAccess": "[parameters('enableBlobPublicAccess')]",
                 "networkAcls": {
                   "defaultAction": "[if(equals(parameters('publicNetworkAccess'), 'Enabled'), 'Allow', 'Deny')]",
-                  "bypass": "AzureServices"
+                  "bypass": "None"
                 }
               }
             }

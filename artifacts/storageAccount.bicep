@@ -54,7 +54,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     allowBlobPublicAccess: enableBlobPublicAccess
     networkAcls: {
       defaultAction: publicNetworkAccess == 'Enabled' ? 'Allow' : 'Deny'
-      bypass: 'AzureServices'
+      bypass: 'None'
     }
   }
 }
