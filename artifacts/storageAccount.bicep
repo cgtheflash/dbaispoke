@@ -41,7 +41,7 @@ param publicNetworkAccess string = 'Disabled'
 @description('Tags for the resources')
 param tags object = {}
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: name
   location: location
   tags: tags
@@ -52,6 +52,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   properties: {
     accessTier: accessTier
     allowBlobPublicAccess: enableBlobPublicAccess
+    publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: publicNetworkAccess == 'Enabled' ? 'Allow' : 'Deny'
       bypass: 'None'

@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "6934632870753268292"
+      "templateHash": "11898141860900584028"
     }
   },
   "parameters": {
@@ -1730,7 +1730,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "6914130725487445092"
+              "templateHash": "5304588088254738087"
             }
           },
           "parameters": {
@@ -1812,7 +1812,7 @@
           "resources": [
             {
               "type": "Microsoft.Storage/storageAccounts",
-              "apiVersion": "2021-04-01",
+              "apiVersion": "2023-01-01",
               "name": "[parameters('name')]",
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
@@ -1823,6 +1823,7 @@
               "properties": {
                 "accessTier": "[parameters('accessTier')]",
                 "allowBlobPublicAccess": "[parameters('enableBlobPublicAccess')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "networkAcls": {
                   "defaultAction": "[if(equals(parameters('publicNetworkAccess'), 'Enabled'), 'Allow', 'Deny')]",
                   "bypass": "None"
