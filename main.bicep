@@ -23,11 +23,11 @@ param appServiceSku string = 'P1v2'
 @description('Tags for all resources')
 param tags object = {
   Environment: environment
-  Project: 'Demo'
+  Project: 'DB Gameday'
   DeployedBy: 'Bicep'
 }
 
-param prefix string = 'demo'
+param prefix string = 'dbgameday'
 param vnetAddressPrefix string = '10.0.0.0/16'
 param appgwSubnetPrefix string = '10.0.0.0/24'
 param peSubnetPrefix string = '10.0.1.0/24'
@@ -183,6 +183,9 @@ module nsg 'artifacts/nsg.bicep' = {
       }
     ]
   }
+  dependsOn: [
+    asgs
+  ]
 }
 
 // Create Route Table with default route
@@ -222,6 +225,10 @@ module vnet 'artifacts/vnet.bicep' = {
       nsg.outputs.nsgId
     ]
   }
+  dependsOn: [
+    nsg
+    routeTable
+  ]
 }
 
 // Create App Service Plan
@@ -251,6 +258,9 @@ module appService 'artifacts/appservice.bicep' = {
     subnetId: vnet.outputs.virtualNetworkId
     publicNetworkAccess: publicNetworkAccess
   }
+  dependsOn: [
+    vnet
+  ]
 }
 
 // Create Azure SQL Server and Database
@@ -268,6 +278,9 @@ module sqlServer 'artifacts/azuresql.bicep' = {
     allowAzureIPs: false
     publicNetworkAccess: publicNetworkAccess
   }
+  dependsOn: [
+    vnet
+  ]
 }
 
 // Create Private Endpoint for SQL Server
@@ -281,6 +294,10 @@ module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
     groupId: 'sqlServer'
     asgIds: [asgs[1].outputs.asgId]
   }
+  dependsOn: [
+    sqlServer
+    vnet
+  ]
 }
 
 // Create Private Endpoint for App Service
@@ -294,6 +311,10 @@ module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
     groupId: 'sites'
     asgIds: [asgs[1].outputs.asgId]
   }
+  dependsOn: [
+    appService
+    vnet
+  ]
 }
 
 // Create Public IP for Application Gateway
@@ -369,6 +390,11 @@ module appGw 'artifacts/appgw.bicep' = {
       }
     ]
   }
+  dependsOn: [
+    appGwPublicIp
+    appService
+    vnet
+  ]
 }
 
 module sqlBackupStorage 'artifacts/storageAccount.bicep' = {
@@ -394,6 +420,10 @@ module sqlBackupStoragePe 'artifacts/privateendpoint.bicep' = {
     groupId: 'blob'
     asgIds: [asgs[2].outputs.asgId]
   }
+  dependsOn: [
+    sqlBackupStorage
+    vnet
+  ]
 }
 
 output vnetId string = vnet.outputs.virtualNetworkId
