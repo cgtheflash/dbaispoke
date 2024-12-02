@@ -36,6 +36,11 @@ param integrationSubnetPrefix string = '10.0.2.0/24'
 // Add parameter for next hop IP
 param defaultRouteNextHopIp string
 
+// Add parameters
+@description('Enable public network access for PaaS services')
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Disabled'
+
 // Network configuration
 var vnetName = '${prefix}-vnet'
 var subnets = [
@@ -243,6 +248,7 @@ module appService 'artifacts/appservice.bicep' = {
     appServicePlanId: appServicePlan.id
     linuxFxVersion: 'dotnet:6'
     subnetId: vnet.outputs.virtualNetworkId
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
@@ -259,11 +265,12 @@ module sqlServer 'artifacts/azuresql.bicep' = {
     skuName: 'Basic'
     tier: 'Basic'
     allowAzureIPs: false
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
 // Create Private Endpoint for SQL Server
-module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = {
+module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkAccess == 'Disabled') {
   name: 'sql-pe-deployment'
   params: {
     name: '${prefix}-sql-pe'
@@ -276,7 +283,7 @@ module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = {
 }
 
 // Create Private Endpoint for App Service
-module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = {
+module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkAccess == 'Disabled') {
   name: 'app-pe-deployment'
   params: {
     name: '${prefix}-app-pe'

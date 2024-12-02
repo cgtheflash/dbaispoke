@@ -27,6 +27,10 @@ param subnetId string = ''
 @description('Tags for the resources')
 param tags object = {}
 
+@description('Enable public network access')
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Disabled'
+
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
@@ -38,6 +42,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       appSettings: appSettings
       alwaysOn: true
     }
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 

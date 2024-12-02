@@ -26,6 +26,10 @@ param allowAzureIPs bool = true
 @description('Tags for the resources')
 param tags object = {}
 
+@description('Enable public network access')
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Disabled'
+
 resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = {
   name: serverName
   location: location
@@ -34,6 +38,7 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = {
     administratorLogin: administratorLogin
     administratorLoginPassword: administratorLoginPassword
     version: '12.0'
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
