@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "2056169658645365358"
+      "templateHash": "6808778046094167154"
     }
   },
   "parameters": {
@@ -73,6 +73,17 @@
     },
     "defaultRouteNextHopIp": {
       "type": "string"
+    },
+    "publicNetworkAccess": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "metadata": {
+        "description": "Enable public network access for PaaS services"
+      }
     }
   },
   "variables": {
@@ -355,11 +366,11 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[2]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[2]))]"
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]"
       ]
     },
     {
@@ -623,6 +634,9 @@
           },
           "subnetId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value]"
+          },
+          "publicNetworkAccess": {
+            "value": "[parameters('publicNetworkAccess')]"
           }
         },
         "template": {
@@ -632,7 +646,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "702886961050589663"
+              "templateHash": "5186043905209600363"
             }
           },
           "parameters": {
@@ -688,6 +702,17 @@
               "metadata": {
                 "description": "Tags for the resources"
               }
+            },
+            "publicNetworkAccess": {
+              "type": "string",
+              "defaultValue": "Disabled",
+              "allowedValues": [
+                "Enabled",
+                "Disabled"
+              ],
+              "metadata": {
+                "description": "Enable public network access"
+              }
             }
           },
           "resources": [
@@ -703,7 +728,8 @@
                   "linuxFxVersion": "[parameters('linuxFxVersion')]",
                   "appSettings": "[parameters('appSettings')]",
                   "alwaysOn": true
-                }
+                },
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
               }
             },
             {
@@ -773,6 +799,9 @@
           },
           "allowAzureIPs": {
             "value": false
+          },
+          "publicNetworkAccess": {
+            "value": "[parameters('publicNetworkAccess')]"
           }
         },
         "template": {
@@ -782,7 +811,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "11571781774046743466"
+              "templateHash": "3616052840756981668"
             }
           },
           "parameters": {
@@ -843,6 +872,17 @@
               "metadata": {
                 "description": "Tags for the resources"
               }
+            },
+            "publicNetworkAccess": {
+              "type": "string",
+              "defaultValue": "Disabled",
+              "allowedValues": [
+                "Enabled",
+                "Disabled"
+              ],
+              "metadata": {
+                "description": "Enable public network access"
+              }
             }
           },
           "resources": [
@@ -855,7 +895,8 @@
               "properties": {
                 "administratorLogin": "[parameters('administratorLogin')]",
                 "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-                "version": "12.0"
+                "version": "12.0",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
               }
             },
             {
@@ -904,6 +945,7 @@
       }
     },
     {
+      "condition": "[equals(parameters('publicNetworkAccess'), 'Disabled')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "sql-pe-deployment",
@@ -1076,6 +1118,7 @@
       ]
     },
     {
+      "condition": "[equals(parameters('publicNetworkAccess'), 'Disabled')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "app-pe-deployment",
