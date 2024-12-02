@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "11898141860900584028"
+      "templateHash": "18428763910359974458"
     }
   },
   "parameters": {
@@ -234,6 +234,7 @@
                   "direction": "Inbound",
                   "access": "Allow",
                   "protocol": "Tcp",
+                  "sourcePortRange": "*",
                   "sourceApplicationSecurityGroups": [
                     {
                       "id": "[reference(resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0])), '2022-09-01').outputs.asgId.value]"
@@ -366,11 +367,11 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[2]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
         "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
-        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]"
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[1]))]",
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]",
+        "[resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0]))]"
       ]
     },
     {

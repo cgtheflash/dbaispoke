@@ -109,6 +109,7 @@ module nsg 'artifacts/nsg.bicep' = {
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
+          sourcePortRange: '*'
           sourceApplicationSecurityGroups: [
             {
               id: asgs[0].outputs.asgId  // AppGW ASG
