@@ -38,6 +38,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
         networkSecurityGroup: {
           id: nsgIds[i]
         }
+        privateEndpointNetworkPolicies: subnet.name == 'pe-subnet' ? 'Enabled' : 'Disabled'
       }
     }]
   }

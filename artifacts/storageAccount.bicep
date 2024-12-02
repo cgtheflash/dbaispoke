@@ -39,9 +39,13 @@ param accessTier string = 'Hot'
 @description('Enable blob public access')
 param enableBlobPublicAccess bool = true
 
+@description('Tags for the resources')
+param tags object = {}
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: name
   location: location
+  tags: tags
   sku: {
     name: skuName
   }

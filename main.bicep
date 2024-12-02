@@ -58,6 +58,7 @@ var subnets = [
 var asgNames = [
   '${prefix}-appgw-asg'
   '${prefix}-app-asg'
+  '${prefix}-storage-asg'
 ]
 
 // Create ASGs
@@ -134,9 +135,25 @@ module nsg 'artifacts/nsg.bicep' = {
         }
       }
       {
-        name: 'allow-azure-lb'
+        name: 'allow-vnet-to-storage'
         properties: {
           priority: 130
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationApplicationSecurityGroups: [
+            {
+              id: asgs[2].outputs.asgId  // Storage ASG
+            }
+          ]
+          destinationPortRange: '443'
+        }
+      }
+      {
+        name: 'allow-azure-lb'
+        properties: {
+          priority: 4095
           direction: 'Inbound'
           access: 'Allow'
           protocol: '*'
@@ -298,6 +315,11 @@ module appGw 'artifacts/appgw.bicep' = {
     backendPools: [
       {
         name: 'appServiceBackend'
+        backendAddresses: [
+          {
+            fqdn: appService.outputs.appServiceName  
+          }
+        ]
       }
     ]
     frontendPorts: [
@@ -339,6 +361,30 @@ module appGw 'artifacts/appgw.bicep' = {
         priority: 100
       }
     ]
+  }
+}
+
+module sqlBackupStorage 'artifacts/storageAccount.bicep' = {
+  name: 'sql-backup-storage-deployment'
+  params: {
+    name: '${prefix}sqlbackups${environment}'  // Storage accounts must be globally unique
+    location: location
+    tags: tags
+    skuName: 'Standard_LRS'
+    kind: 'StorageV2'
+    enableBlobPublicAccess: false
+  }
+}
+
+module sqlBackupStoragePe 'artifacts/privateendpoint.bicep' = {
+  name: 'sql-backup-pe-deployment'
+  params: {
+    name: '${prefix}-sqlbackup-pe'
+    location: location
+    subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
+    privateConnectResourceId: sqlBackupStorage.outputs.storageAccountId
+    groupId: 'blob'
+    asgIds: [asgs[2].outputs.asgId]
   }
 }
 
