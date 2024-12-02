@@ -1,6 +1,6 @@
 # Azure Zero Trust Network Infrastructure
 
-This repository contains Bicep templates that deploy Denver Bronco's Stadium Game App Landing Zone, including:
+This repository contains Bicep templates that deploy basic application landing zone, including:
 
 - Virtual Network with segregated subnets
 - Application Gateway
