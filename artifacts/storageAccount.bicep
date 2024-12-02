@@ -34,6 +34,10 @@ param accessTier string = 'Hot'
 @description('Enable blob public access')
 param enableBlobPublicAccess bool = true
 
+@description('Enable public network access')
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Disabled'
+
 @description('Tags for the resources')
 param tags object = {}
 
@@ -48,6 +52,10 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   properties: {
     accessTier: accessTier
     allowBlobPublicAccess: enableBlobPublicAccess
+    networkAcls: {
+      defaultAction: publicNetworkAccess == 'Enabled' ? 'Allow' : 'Deny'
+      bypass: 'AzureServices'
+    }
   }
 }
 

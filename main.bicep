@@ -373,12 +373,13 @@ module appGw 'artifacts/appgw.bicep' = {
 module sqlBackupStorage 'artifacts/storageAccount.bicep' = {
   name: 'sql-backup-storage-deployment'
   params: {
-    name: '${prefix}sqlbackups${environment}'  // Storage accounts must be globally unique
+    name: '${prefix}sqlbackups${environment}'
     location: resourceGroup().location
     tags: tags
     skuName: 'Standard_LRS'
     kind: 'StorageV2'
     enableBlobPublicAccess: false
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
