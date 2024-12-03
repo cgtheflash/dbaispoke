@@ -13,6 +13,9 @@ param subnets array
 @description('Network Security Group IDs')
 param nsgIds array
 
+@description('Route Table ID')
+param routeTableId string
+
 @description('Tags for the resources')
 param tags object = {}
 
@@ -33,7 +36,10 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
         networkSecurityGroup: {
           id: nsgIds[i]
         }
-        privateEndpointNetworkPolicies: subnet.name == 'pe-subnet' ? 'Enabled' : 'Disabled'
+        routeTable: {
+          id: routeTableId
+        }
+        delegations: subnet.delegations
       }
     }]
   }

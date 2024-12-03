@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "13770027458988973880"
+      "templateHash": "10995221191381667853"
     }
   },
   "parameters": {
@@ -91,15 +91,23 @@
     "subnets": [
       {
         "name": "appgw-subnet",
-        "addressPrefix": "[parameters('appgwSubnetPrefix')]"
+        "addressPrefix": "[parameters('appgwSubnetPrefix')]",
+        "delegations": []
       },
       {
         "name": "pe-subnet",
-        "addressPrefix": "[parameters('peSubnetPrefix')]"
+        "addressPrefix": "[parameters('peSubnetPrefix')]",
+        "delegations": []
       },
       {
         "name": "integration-subnet",
-        "addressPrefix": "[parameters('integrationSubnetPrefix')]"
+        "addressPrefix": "[parameters('integrationSubnetPrefix')]",
+        "delegations": [
+          {
+            "name": "Microsoft.Web.serverFarms",
+            "serviceName": "Microsoft.Web/serverFarms"
+          }
+        ]
       }
     ],
     "asgNames": [
@@ -496,13 +504,7 @@
             "value": "[parameters('vnetAddressPrefix')]"
           },
           "subnets": {
-            "copy": [
-              {
-                "name": "value",
-                "count": "[length(variables('subnets'))]",
-                "input": "[createObject('name', variables('subnets')[copyIndex('value')].name, 'addressPrefix', variables('subnets')[copyIndex('value')].addressPrefix, 'routeTableId', reference(resourceId('Microsoft.Resources/deployments', 'rt-deployment'), '2022-09-01').outputs.routeTableId.value)]"
-              }
-            ]
+            "value": "[variables('subnets')]"
           },
           "nsgIds": {
             "value": [
@@ -510,6 +512,9 @@
               "[reference(resourceId('Microsoft.Resources/deployments', 'nsg-deployment'), '2022-09-01').outputs.nsgId.value]",
               "[reference(resourceId('Microsoft.Resources/deployments', 'nsg-deployment'), '2022-09-01').outputs.nsgId.value]"
             ]
+          },
+          "routeTableId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'rt-deployment'), '2022-09-01').outputs.routeTableId.value]"
           }
         },
         "template": {
@@ -519,7 +524,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "8118893726025278718"
+              "templateHash": "1528921432143544877"
             }
           },
           "parameters": {
@@ -553,6 +558,12 @@
                 "description": "Network Security Group IDs"
               }
             },
+            "routeTableId": {
+              "type": "string",
+              "metadata": {
+                "description": "Route Table ID"
+              }
+            },
             "tags": {
               "type": "object",
               "defaultValue": {},
@@ -580,7 +591,10 @@
                         "networkSecurityGroup": {
                           "id": "[parameters('nsgIds')[copyIndex('subnets')]]"
                         },
-                        "privateEndpointNetworkPolicies": "[if(equals(parameters('subnets')[copyIndex('subnets')].name, 'pe-subnet'), 'Enabled', 'Disabled')]"
+                        "routeTable": {
+                          "id": "[parameters('routeTableId')]"
+                        },
+                        "delegations": "[parameters('subnets')[copyIndex('subnets')].delegations]"
                       }
                     }
                   }

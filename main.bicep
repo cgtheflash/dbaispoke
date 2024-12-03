@@ -47,14 +47,22 @@ var subnets = [
   {
     name: 'appgw-subnet'
     addressPrefix: appgwSubnetPrefix
+    delegations: []
   }
   {
     name: 'pe-subnet'
     addressPrefix: peSubnetPrefix
+    delegations: []
   }
   {
     name: 'integration-subnet'
     addressPrefix: integrationSubnetPrefix
+    delegations: [
+      {
+        name: 'Microsoft.Web.serverFarms'
+        serviceName: 'Microsoft.Web/serverFarms'
+      }
+    ]
   }
 ]
 
@@ -216,16 +224,13 @@ module vnet 'artifacts/vnet.bicep' = {
     location: resourceGroup().location
     tags: tags
     addressPrefix: vnetAddressPrefix
-    subnets: [for (subnet, i) in subnets: {
-      name: subnet.name
-      addressPrefix: subnet.addressPrefix
-      routeTableId: routeTable.outputs.routeTableId
-    }]
+    subnets: subnets
     nsgIds: [
       nsg.outputs.nsgId
       nsg.outputs.nsgId
       nsg.outputs.nsgId
     ]
+    routeTableId: routeTable.outputs.routeTableId
   }
   dependsOn: [
     nsg
