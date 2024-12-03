@@ -410,7 +410,7 @@ module appGw 'artifacts/appgw.bicep' = {
         ruleType: 'Basic'
         httpListener: 'httpsListener'
         backendAddressPool: 'app-backend'
-        backendHttpSettings: 'app-http-settings'
+        backendHttpSettings: 'appServiceHttpSetting'
         priority: 100
       }
     ]

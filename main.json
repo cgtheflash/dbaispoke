@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "16472292253543391133"
+      "templateHash": "4839436376838617034"
     }
   },
   "parameters": {
@@ -1500,7 +1500,7 @@
                 "ruleType": "Basic",
                 "httpListener": "httpsListener",
                 "backendAddressPool": "app-backend",
-                "backendHttpSettings": "app-http-settings",
+                "backendHttpSettings": "appServiceHttpSetting",
                 "priority": 100
               }
             ]
