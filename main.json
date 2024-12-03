@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "4871746872109299447"
+      "templateHash": "16209635813169901265"
     }
   },
   "parameters": {
@@ -1158,7 +1158,7 @@
             "value": "[resourceGroup().location]"
           },
           "subnetId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[2].id]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[1].id]"
           },
           "privateConnectResourceId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appservice-deployment'), '2022-09-01').outputs.appServiceId.value]"
@@ -1500,7 +1500,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "4887354340921334792"
+              "templateHash": "6397996802130828672"
             }
           },
           "parameters": {
@@ -1651,8 +1651,8 @@
                           "id": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts', parameters('appgwName'), parameters('listeners')[copyIndex('httpListeners')].frontendPort)]"
                         },
                         "protocol": "[parameters('listeners')[copyIndex('httpListeners')].protocol]",
-                        "hostName": "[parameters('listeners')[copyIndex('httpListeners')].hostName]",
-                        "requireServerNameIndication": "[parameters('listeners')[copyIndex('httpListeners')].requireServerNameIndication]"
+                        "requireServerNameIndication": "[parameters('listeners')[copyIndex('httpListeners')].requireServerNameIndication]",
+                        "hostName": "[if(contains(parameters('listeners')[copyIndex('httpListeners')], 'hostName'), parameters('listeners')[copyIndex('httpListeners')].hostName, null())]"
                       }
                     }
                   },

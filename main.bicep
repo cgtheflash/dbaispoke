@@ -315,7 +315,7 @@ module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
   params: {
     name: '${prefix}-app-pe'
     location: resourceGroup().location
-    subnetId: vnet.outputs.subnetIds[2].id
+    subnetId: vnet.outputs.subnetIds[1].id
     privateConnectResourceId: appService.outputs.appServiceId
     groupId: 'sites'
     asgIds: [asgs[1].outputs.asgId]
