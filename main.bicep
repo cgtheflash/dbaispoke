@@ -114,11 +114,7 @@ module nsg 'artifacts/nsg.bicep' = {
           protocol: 'Tcp'
           sourceAddressPrefix: 'Internet'
           sourcePortRange: '*'
-          destinationApplicationSecurityGroups: [
-            {
-              id: asgs[0].outputs.asgId  // AppGW ASG
-            }
-          ]
+          destinationAddressPrefix: appgwSubnetPrefix
           destinationPortRanges: [
             '80'
             '443'
@@ -359,23 +355,26 @@ module appGw 'artifacts/appgw.bicep' = {
   params: {
     appgwName: '${prefix}-appgw'
     location: resourceGroup().location
+    tags: tags
     subnetId: vnet.outputs.subnetIds[0].id
+    publicIpName: appGwPublicIp.name
+    backendPools: [
+      {
+        name: 'app-backend'
+        properties: {
+          backendAddresses: [
+            {
+              fqdn: '${appService.outputs.appServiceName}.azurewebsites.net'
+            }
+          ]
+        }
+      }
+    ]
     skuName: 'Standard_v2'
     skuTier: 'Standard_v2'
     capacity: 2
-    publicIpName: appGwPublicIp.outputs.publicIpName
     constructPublicFrontendIpConfig: true
     constructPrivateFrontendIpConfig: false
-    backendPools: [
-      {
-        name: 'appServiceBackend'
-        backendAddresses: [
-          {
-            fqdn: appService.outputs.appServiceName  
-          }
-        ]
-      }
-    ]
     frontendPorts: [
       {
         name: 'port_80'
@@ -410,8 +409,8 @@ module appGw 'artifacts/appgw.bicep' = {
         name: 'appServiceRule'
         ruleType: 'Basic'
         httpListener: 'httpsListener'
-        backendAddressPool: 'appServiceBackend'
-        backendHttpSettings: 'appServiceHttpSetting'
+        backendAddressPool: 'app-backend'
+        backendHttpSettings: 'app-http-settings'
         priority: 100
       }
     ]

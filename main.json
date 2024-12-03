@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "13475896004853084311"
+      "templateHash": "16472292253543391133"
     }
   },
   "parameters": {
@@ -239,11 +239,7 @@
                   "protocol": "Tcp",
                   "sourceAddressPrefix": "Internet",
                   "sourcePortRange": "*",
-                  "destinationApplicationSecurityGroups": [
-                    {
-                      "id": "[reference(resourceId('Microsoft.Resources/deployments', format('asg-{0}', variables('asgNames')[0])), '2022-09-01').outputs.asgId.value]"
-                    }
-                  ],
+                  "destinationAddressPrefix": "[parameters('appgwSubnetPrefix')]",
                   "destinationPortRanges": [
                     "80",
                     "443"
@@ -1424,8 +1420,28 @@
           "location": {
             "value": "[resourceGroup().location]"
           },
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
           "subnetId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[0].id]"
+          },
+          "publicIpName": {
+            "value": "appgw-pip-deployment"
+          },
+          "backendPools": {
+            "value": [
+              {
+                "name": "app-backend",
+                "properties": {
+                  "backendAddresses": [
+                    {
+                      "fqdn": "[format('{0}.azurewebsites.net', reference(resourceId('Microsoft.Resources/deployments', 'appservice-deployment'), '2022-09-01').outputs.appServiceName.value)]"
+                    }
+                  ]
+                }
+              }
+            ]
           },
           "skuName": {
             "value": "Standard_v2"
@@ -1436,26 +1452,11 @@
           "capacity": {
             "value": 2
           },
-          "publicIpName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appgw-pip-deployment'), '2022-09-01').outputs.publicIpName.value]"
-          },
           "constructPublicFrontendIpConfig": {
             "value": true
           },
           "constructPrivateFrontendIpConfig": {
             "value": false
-          },
-          "backendPools": {
-            "value": [
-              {
-                "name": "appServiceBackend",
-                "backendAddresses": [
-                  {
-                    "fqdn": "[reference(resourceId('Microsoft.Resources/deployments', 'appservice-deployment'), '2022-09-01').outputs.appServiceName.value]"
-                  }
-                ]
-              }
-            ]
           },
           "frontendPorts": {
             "value": [
@@ -1498,8 +1499,8 @@
                 "name": "appServiceRule",
                 "ruleType": "Basic",
                 "httpListener": "httpsListener",
-                "backendAddressPool": "appServiceBackend",
-                "backendHttpSettings": "appServiceHttpSetting",
+                "backendAddressPool": "app-backend",
+                "backendHttpSettings": "app-http-settings",
                 "priority": 100
               }
             ]
