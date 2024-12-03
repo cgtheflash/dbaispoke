@@ -239,13 +239,17 @@ module vnet 'artifacts/vnet.bicep' = {
     location: resourceGroup().location
     tags: tags
     addressPrefix: vnetAddressPrefix
-    subnets: subnets
+    subnets: [for (subnet, i) in subnets: {
+      name: subnet.name
+      addressPrefix: subnet.addressPrefix
+      delegations: subnet.delegations
+      routeTableId: subnet.name == 'appgw-subnet' ? null : routeTable.outputs.routeTableId
+    }]
     nsgIds: [
       nsg.outputs.nsgId
       nsg.outputs.nsgId
       nsg.outputs.nsgId
     ]
-    routeTableId: routeTable.outputs.routeTableId
   }
   dependsOn: [
     nsg

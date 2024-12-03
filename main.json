@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "15721027798068436727"
+      "templateHash": "13475896004853084311"
     }
   },
   "parameters": {
@@ -519,7 +519,13 @@
             "value": "[parameters('vnetAddressPrefix')]"
           },
           "subnets": {
-            "value": "[variables('subnets')]"
+            "copy": [
+              {
+                "name": "value",
+                "count": "[length(variables('subnets'))]",
+                "input": "[createObject('name', variables('subnets')[copyIndex('value')].name, 'addressPrefix', variables('subnets')[copyIndex('value')].addressPrefix, 'delegations', variables('subnets')[copyIndex('value')].delegations, 'routeTableId', if(equals(variables('subnets')[copyIndex('value')].name, 'appgw-subnet'), null(), reference(resourceId('Microsoft.Resources/deployments', 'rt-deployment'), '2022-09-01').outputs.routeTableId.value))]"
+              }
+            ]
           },
           "nsgIds": {
             "value": [
@@ -527,9 +533,6 @@
               "[reference(resourceId('Microsoft.Resources/deployments', 'nsg-deployment'), '2022-09-01').outputs.nsgId.value]",
               "[reference(resourceId('Microsoft.Resources/deployments', 'nsg-deployment'), '2022-09-01').outputs.nsgId.value]"
             ]
-          },
-          "routeTableId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'rt-deployment'), '2022-09-01').outputs.routeTableId.value]"
           }
         },
         "template": {
@@ -539,7 +542,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "1528921432143544877"
+              "templateHash": "10226440070690503597"
             }
           },
           "parameters": {
@@ -573,12 +576,6 @@
                 "description": "Network Security Group IDs"
               }
             },
-            "routeTableId": {
-              "type": "string",
-              "metadata": {
-                "description": "Route Table ID"
-              }
-            },
             "tags": {
               "type": "object",
               "defaultValue": {},
@@ -606,9 +603,7 @@
                         "networkSecurityGroup": {
                           "id": "[parameters('nsgIds')[copyIndex('subnets')]]"
                         },
-                        "routeTable": {
-                          "id": "[parameters('routeTableId')]"
-                        },
+                        "routeTable": "[if(not(equals(parameters('subnets')[copyIndex('subnets')].routeTableId, null())), createObject('id', parameters('subnets')[copyIndex('subnets')].routeTableId), null())]",
                         "delegations": "[parameters('subnets')[copyIndex('subnets')].delegations]"
                       }
                     }
