@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "16209635813169901265"
+      "templateHash": "12954616223542135673"
     }
   },
   "parameters": {
@@ -1340,7 +1340,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "12867371842773155717"
+              "templateHash": "11348382277278120373"
             }
           },
           "parameters": {
@@ -1391,6 +1391,10 @@
             "publicIpId": {
               "type": "string",
               "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('name'))]"
+            },
+            "publicIpName": {
+              "type": "string",
+              "value": "[parameters('name')]"
             }
           }
         }
@@ -1425,7 +1429,7 @@
             "value": 2
           },
           "publicIpName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appgw-pip-deployment'), '2022-09-01').outputs.publicIpId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appgw-pip-deployment'), '2022-09-01').outputs.publicIpName.value]"
           },
           "constructPublicFrontendIpConfig": {
             "value": true
@@ -1500,7 +1504,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "6397996802130828672"
+              "templateHash": "5254476913586697311"
             }
           },
           "parameters": {
@@ -1652,7 +1656,7 @@
                         },
                         "protocol": "[parameters('listeners')[copyIndex('httpListeners')].protocol]",
                         "requireServerNameIndication": "[parameters('listeners')[copyIndex('httpListeners')].requireServerNameIndication]",
-                        "hostName": "[if(contains(parameters('listeners')[copyIndex('httpListeners')], 'hostName'), parameters('listeners')[copyIndex('httpListeners')].hostName, null())]"
+                        "hostName": "[tryGet(parameters('listeners')[copyIndex('httpListeners')], 'hostName')]"
                       }
                     }
                   },

@@ -24,3 +24,4 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2020-11-01' = {
 }
 
 output publicIpId string = publicIp.id
+output publicIpName string = publicIp.name

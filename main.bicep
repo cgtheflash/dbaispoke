@@ -346,7 +346,7 @@ module appGw 'artifacts/appgw.bicep' = {
     skuName: 'Standard_v2'
     skuTier: 'Standard_v2'
     capacity: 2
-    publicIpName: appGwPublicIp.outputs.publicIpId
+    publicIpName: appGwPublicIp.outputs.publicIpName
     constructPublicFrontendIpConfig: true
     constructPrivateFrontendIpConfig: false
     backendPools: [

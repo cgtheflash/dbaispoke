@@ -125,7 +125,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2023-11-01' =
           }
           protocol: listener.protocol
           requireServerNameIndication: listener.requireServerNameIndication
-          hostName: contains(listener, 'hostName') ? listener.hostName : null
+          hostName: listener.?hostName
         }
       }
     ]
