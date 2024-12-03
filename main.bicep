@@ -59,8 +59,10 @@ var subnets = [
     addressPrefix: integrationSubnetPrefix
     delegations: [
       {
-        name: 'Microsoft.Web.serverFarms'
-        serviceName: 'Microsoft.Web/serverFarms'
+        name: 'delegation'
+        properties: {
+          serviceName: 'Microsoft.Web/serverFarms'
+        }
       }
     ]
   }

@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "10995221191381667853"
+      "templateHash": "4871746872109299447"
     }
   },
   "parameters": {
@@ -104,8 +104,10 @@
         "addressPrefix": "[parameters('integrationSubnetPrefix')]",
         "delegations": [
           {
-            "name": "Microsoft.Web.serverFarms",
-            "serviceName": "Microsoft.Web/serverFarms"
+            "name": "delegation",
+            "properties": {
+              "serviceName": "Microsoft.Web/serverFarms"
+            }
           }
         ]
       }
