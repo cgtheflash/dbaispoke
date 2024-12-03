@@ -361,9 +361,9 @@ module appGw 'artifacts/appgw.bicep' = {
     ]
     frontendPorts: [
       {
-        name: 'port_443'
+        name: 'port_80'
         properties: {
-          port: 443
+          port: 80
         }
       }
     ]
@@ -371,8 +371,8 @@ module appGw 'artifacts/appgw.bicep' = {
       {
         name: 'appServiceHttpSetting'
         properties: {
-          port: 443
-          protocol: 'Https'
+          port: 80
+          protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: true
           requestTimeout: 20
@@ -383,8 +383,8 @@ module appGw 'artifacts/appgw.bicep' = {
       {
         name: 'httpsListener'
         frontendIPConfiguration: 'appGwPublicFrontendIp'
-        frontendPort: 'port_443'
-        protocol: 'Https'
+        frontendPort: 'port_80'
+        protocol: 'Http'
         requireServerNameIndication: false
       }
     ]

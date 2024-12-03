@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "12954616223542135673"
+      "templateHash": "10650588127560780878"
     }
   },
   "parameters": {
@@ -1452,9 +1452,9 @@
           "frontendPorts": {
             "value": [
               {
-                "name": "port_443",
+                "name": "port_80",
                 "properties": {
-                  "port": 443
+                  "port": 80
                 }
               }
             ]
@@ -1464,8 +1464,8 @@
               {
                 "name": "appServiceHttpSetting",
                 "properties": {
-                  "port": 443,
-                  "protocol": "Https",
+                  "port": 80,
+                  "protocol": "Http",
                   "cookieBasedAffinity": "Disabled",
                   "pickHostNameFromBackendAddress": true,
                   "requestTimeout": 20
@@ -1478,8 +1478,8 @@
               {
                 "name": "httpsListener",
                 "frontendIPConfiguration": "appGwPublicFrontendIp",
-                "frontendPort": "port_443",
-                "protocol": "Https",
+                "frontendPort": "port_80",
+                "protocol": "Http",
                 "requireServerNameIndication": false
               }
             ]
