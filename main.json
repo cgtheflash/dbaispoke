@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "11440447068721035142"
+      "templateHash": "9026427977461089021"
     }
   },
   "parameters": {
@@ -519,7 +519,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "13990543105835014758"
+              "templateHash": "8118893726025278718"
             }
           },
           "parameters": {
@@ -597,6 +597,16 @@
             "virtualNetworkId": {
               "type": "string",
               "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('name'))]"
+            },
+            "subnetIds": {
+              "type": "array",
+              "copy": {
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                  "name": "[parameters('subnets')[copyIndex()].name]",
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('name'), parameters('subnets')[copyIndex()].name)]"
+                }
+              }
             }
           }
         }
@@ -632,7 +642,7 @@
             "value": "dotnet:6"
           },
           "subnetId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[2].id]"
           },
           "publicNetworkAccess": {
             "value": "[parameters('publicNetworkAccess')]"
@@ -801,7 +811,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "3616052840756981668"
+              "templateHash": "1059873290259459769"
             }
           },
           "parameters": {
@@ -918,6 +928,10 @@
             }
           ],
           "outputs": {
+            "serverId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+            },
             "serverName": {
               "type": "string",
               "value": "[parameters('serverName')]"
@@ -958,7 +972,7 @@
             "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[1].name)]"
           },
           "privateConnectResourceId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'sql-deployment'), '2022-09-01').outputs.serverName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'sql-deployment'), '2022-09-01').outputs.serverId.value]"
           },
           "groupId": {
             "value": "sqlServer"

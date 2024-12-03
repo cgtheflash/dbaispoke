@@ -257,7 +257,7 @@ module appService 'artifacts/appservice.bicep' = {
     tags: tags
     appServicePlanId: appServicePlan.id
     linuxFxVersion: 'dotnet:6'
-    subnetId: vnet.outputs.virtualNetworkId
+    subnetId: vnet.outputs.subnetIds[2].id  // Use integration subnet (index 2)
     publicNetworkAccess: publicNetworkAccess
   }
   dependsOn: [
@@ -292,7 +292,7 @@ module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
     name: '${prefix}-sql-pe'
     location: resourceGroup().location
     subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
-    privateConnectResourceId: sqlServer.outputs.serverName
+    privateConnectResourceId: sqlServer.outputs.serverId
     groupId: 'sqlServer'
     asgIds: [asgs[1].outputs.asgId]
   }

@@ -62,6 +62,7 @@ resource allowAzureServices 'Microsoft.Sql/servers/firewallRules@2021-11-01' = i
   }
 }
 
+output serverId string = sqlServer.id
 output serverName string = sqlServer.name
 output databaseName string = sqlDatabase.name
 output serverFqdn string = sqlServer.properties.fullyQualifiedDomainName 
