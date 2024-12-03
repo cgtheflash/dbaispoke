@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "10650588127560780878"
+      "templateHash": "15721027798068436727"
     }
   },
   "parameters": {
@@ -218,9 +218,22 @@
           "rules": {
             "value": [
               {
+                "name": "allow-gwm",
+                "properties": {
+                  "protocol": "*",
+                  "sourcePortRange": "*",
+                  "destinationPortRange": "65200-65535",
+                  "sourceAddressPrefix": "GatewayManager",
+                  "destinationAddressPrefix": "*",
+                  "access": "Allow",
+                  "priority": 100,
+                  "direction": "Inbound"
+                }
+              },
+              {
                 "name": "allow-internet-to-appgw",
                 "properties": {
-                  "priority": 100,
+                  "priority": 110,
                   "direction": "Inbound",
                   "access": "Allow",
                   "protocol": "Tcp",
@@ -240,7 +253,7 @@
               {
                 "name": "allow-appgw-to-app",
                 "properties": {
-                  "priority": 110,
+                  "priority": 120,
                   "direction": "Inbound",
                   "access": "Allow",
                   "protocol": "Tcp",
@@ -261,7 +274,7 @@
               {
                 "name": "allow-app-to-sql",
                 "properties": {
-                  "priority": 120,
+                  "priority": 130,
                   "direction": "Inbound",
                   "access": "Allow",
                   "protocol": "Tcp",
@@ -278,7 +291,7 @@
               {
                 "name": "allow-vnet-to-storage",
                 "properties": {
-                  "priority": 130,
+                  "priority": 140,
                   "direction": "Inbound",
                   "access": "Allow",
                   "protocol": "Tcp",
@@ -293,16 +306,16 @@
                 }
               },
               {
-                "name": "allow-azure-lb",
+                "name": "allow-azureLoadBalancer",
                 "properties": {
-                  "priority": 4095,
-                  "direction": "Inbound",
-                  "access": "Allow",
                   "protocol": "*",
-                  "sourceAddressPrefix": "AzureLoadBalancer",
                   "sourcePortRange": "*",
+                  "destinationPortRange": "*",
+                  "sourceAddressPrefix": "AzureLoadBalancer",
                   "destinationAddressPrefix": "*",
-                  "destinationPortRange": "*"
+                  "access": "Allow",
+                  "priority": 4095,
+                  "direction": "Inbound"
                 }
               },
               {

@@ -93,9 +93,22 @@ module nsg 'artifacts/nsg.bicep' = {
     tags: tags
     rules: [
       {
+        name: 'allow-gwm'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '65200-65535'
+          sourceAddressPrefix: 'GatewayManager'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 100
+          direction: 'Inbound'
+        }
+      }
+      {
         name: 'allow-internet-to-appgw'
         properties: {
-          priority: 100
+          priority: 110
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
@@ -115,7 +128,7 @@ module nsg 'artifacts/nsg.bicep' = {
       {
         name: 'allow-appgw-to-app'
         properties: {
-          priority: 110
+          priority: 120
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
@@ -136,7 +149,7 @@ module nsg 'artifacts/nsg.bicep' = {
       {
         name: 'allow-app-to-sql'
         properties: {
-          priority: 120
+          priority: 130
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
@@ -153,7 +166,7 @@ module nsg 'artifacts/nsg.bicep' = {
       {
         name: 'allow-vnet-to-storage'
         properties: {
-          priority: 130
+          priority: 140
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
@@ -168,16 +181,16 @@ module nsg 'artifacts/nsg.bicep' = {
         }
       }
       {
-        name: 'allow-azure-lb'
+        name: 'allow-azureLoadBalancer'
         properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '*'
+          sourceAddressPrefix: 'AzureLoadBalancer'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
           priority: 4095
           direction: 'Inbound'
-          access: 'Allow'
-          protocol: '*'
-          sourceAddressPrefix: 'AzureLoadBalancer'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '*'
         }
       }
       {
