@@ -37,21 +37,16 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   tags: tags
   properties: {
     serverFarmId: appServicePlanId
+    virtualNetworkSubnetId: subnetId
+    vnetRouteAllEnabled: true
+    httpsOnly: true
     siteConfig: {
       linuxFxVersion: linuxFxVersion
       appSettings: appSettings
       alwaysOn: true
+      http20Enabled: true
     }
     publicNetworkAccess: publicNetworkAccess
-  }
-}
-
-resource networkConfig 'Microsoft.Web/sites/networkConfig@2022-03-01' = if (!empty(subnetId)) {
-  parent: appService
-  name: 'virtualNetwork'
-  properties: {
-    subnetResourceId: subnetId
-    swiftSupported: true
   }
 }
 

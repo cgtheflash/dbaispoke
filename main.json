@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "9142273874639120425"
+      "templateHash": "11440447068721035142"
     }
   },
   "parameters": {
@@ -645,7 +645,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "5186043905209600363"
+              "templateHash": "11986506921962071837"
             }
           },
           "parameters": {
@@ -723,26 +723,17 @@
               "tags": "[parameters('tags')]",
               "properties": {
                 "serverFarmId": "[parameters('appServicePlanId')]",
+                "virtualNetworkSubnetId": "[parameters('subnetId')]",
+                "vnetRouteAllEnabled": true,
+                "httpsOnly": true,
                 "siteConfig": {
                   "linuxFxVersion": "[parameters('linuxFxVersion')]",
                   "appSettings": "[parameters('appSettings')]",
-                  "alwaysOn": true
+                  "alwaysOn": true,
+                  "http20Enabled": true
                 },
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
               }
-            },
-            {
-              "condition": "[not(empty(parameters('subnetId')))]",
-              "type": "Microsoft.Web/sites/networkConfig",
-              "apiVersion": "2022-03-01",
-              "name": "[format('{0}/{1}', parameters('name'), 'virtualNetwork')]",
-              "properties": {
-                "subnetResourceId": "[parameters('subnetId')]",
-                "swiftSupported": true
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
-              ]
             }
           ],
           "outputs": {
