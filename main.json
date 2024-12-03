@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "9026427977461089021"
+      "templateHash": "13770027458988973880"
     }
   },
   "parameters": {
@@ -969,7 +969,7 @@
             "value": "[resourceGroup().location]"
           },
           "subnetId": {
-            "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[1].name)]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[1].id]"
           },
           "privateConnectResourceId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'sql-deployment'), '2022-09-01').outputs.serverId.value]"
@@ -1142,7 +1142,7 @@
             "value": "[resourceGroup().location]"
           },
           "subnetId": {
-            "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[1].name)]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[2].id]"
           },
           "privateConnectResourceId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appservice-deployment'), '2022-09-01').outputs.appServiceId.value]"
@@ -1397,7 +1397,7 @@
             "value": "[resourceGroup().location]"
           },
           "subnetId": {
-            "value": "[format('{0}/subnets/{1}', reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.virtualNetworkId.value, variables('subnets')[0].name)]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[0].id]"
           },
           "skuName": {
             "value": "Standard_v2"

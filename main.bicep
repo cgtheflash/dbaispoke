@@ -291,7 +291,7 @@ module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
   params: {
     name: '${prefix}-sql-pe'
     location: resourceGroup().location
-    subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
+    subnetId: vnet.outputs.subnetIds[1].id  // Use PE subnet (index 1)
     privateConnectResourceId: sqlServer.outputs.serverId
     groupId: 'sqlServer'
     asgIds: [asgs[1].outputs.asgId]
@@ -308,7 +308,7 @@ module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
   params: {
     name: '${prefix}-app-pe'
     location: resourceGroup().location
-    subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[1].name}'
+    subnetId: vnet.outputs.subnetIds[2].id
     privateConnectResourceId: appService.outputs.appServiceId
     groupId: 'sites'
     asgIds: [asgs[1].outputs.asgId]
@@ -335,7 +335,7 @@ module appGw 'artifacts/appgw.bicep' = {
   params: {
     appgwName: '${prefix}-appgw'
     location: resourceGroup().location
-    subnetId: '${vnet.outputs.virtualNetworkId}/subnets/${subnets[0].name}'  // AppGW subnet
+    subnetId: vnet.outputs.subnetIds[0].id
     skuName: 'Standard_v2'
     skuTier: 'Standard_v2'
     capacity: 2
