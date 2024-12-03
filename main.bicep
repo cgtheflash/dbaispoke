@@ -130,6 +130,7 @@ module nsg 'artifacts/nsg.bicep' = {
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
+          sourcePortRange: '*'
           sourceApplicationSecurityGroups: [
             {
               id: asgs[1].outputs.asgId  // App ASG
@@ -147,6 +148,7 @@ module nsg 'artifacts/nsg.bicep' = {
           access: 'Allow'
           protocol: 'Tcp'
           sourceAddressPrefix: 'VirtualNetwork'
+          sourcePortRange: '*'
           destinationApplicationSecurityGroups: [
             {
               id: asgs[2].outputs.asgId  // Storage ASG
