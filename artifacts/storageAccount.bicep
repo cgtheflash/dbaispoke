@@ -57,6 +57,8 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
       defaultAction: publicNetworkAccess == 'Enabled' ? 'Allow' : 'Deny'
       bypass: 'None'
     }
+    supportsHttpsTrafficOnly: true
+    minimumTlsVersion: 'TLS1_2'
   }
 }
 

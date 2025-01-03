@@ -7,18 +7,18 @@
 ])
 param environment string = 'dev'
 
-@description('SQL Server administrator password')
-@secure()
-@minLength(12)
-param sqlAdminPassword string
+// @description('SQL Server administrator password')
+// @secure()
+// @minLength(12)
+// param sqlAdminPassword string
 
 @description('App Service SKU')
 @allowed([
-  'P1v2'
-  'P2v2'
-  'P3v2'
+  'P0v3'
+  'P1v3'
+  'P1mv3'
 ])
-param appServiceSku string = 'P1v2'
+param appServiceSku string = 'P1v3'
 
 @description('Tags for all resources')
 param tags object = {
@@ -40,6 +40,12 @@ param defaultRouteNextHopIp string
 @description('Enable public network access for PaaS services')
 @allowed(['Enabled', 'Disabled'])
 param publicNetworkAccess string = 'Disabled'
+
+@description('Object ID of the Azure Entra group for SQL administrators')
+param sqlAdminGroupObjectId string
+
+@description('Display name of the Azure Entra group for SQL administrators')
+param sqlAdminGroupName string = 'SQL Administrators'
 
 // Network configuration
 var vnetName = '${prefix}-vnet'
@@ -176,32 +182,32 @@ module nsg 'artifacts/nsg.bicep' = {
           destinationPortRange: '443'
         }
       }
-      {
-        name: 'allow-azureLoadBalancer'
-        properties: {
-          protocol: '*'
-          sourcePortRange: '*'
-          destinationPortRange: '*'
-          sourceAddressPrefix: 'AzureLoadBalancer'
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 4095
-          direction: 'Inbound'
-        }
-      }
-      {
-        name: 'deny-all-inbound'
-        properties: {
-          priority: 4096
-          direction: 'Inbound'
-          access: 'Deny'
-          protocol: '*'
-          sourceAddressPrefix: '*'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '*'
-        }
-      }
+      // {
+      //   name: 'allow-azureLoadBalancer'
+      //   properties: {
+      //     protocol: '*'
+      //     sourcePortRange: '*'
+      //     destinationPortRange: '*'
+      //     sourceAddressPrefix: 'AzureLoadBalancer'
+      //     destinationAddressPrefix: '*'
+      //     access: 'Allow'
+      //     priority: 4095
+      //     direction: 'Inbound'
+      //   }
+      // }
+      // {
+      //   name: 'deny-all-inbound'
+      //   properties: {
+      //     priority: 4096
+      //     direction: 'Inbound'
+      //     access: 'Deny'
+      //     protocol: '*'
+      //     sourceAddressPrefix: '*'
+      //     sourcePortRange: '*'
+      //     destinationAddressPrefix: '*'
+      //     destinationPortRange: '*'
+      //   }
+      // }
     ]
   }
   dependsOn: [
@@ -293,12 +299,14 @@ module sqlServer 'artifacts/azuresql.bicep' = {
     databaseName: '${prefix}-db'
     location: resourceGroup().location
     tags: tags
-    administratorLogin: 'sqladmin'
-    administratorLoginPassword: sqlAdminPassword
+    // administratorLogin: 'sqladmin'
+    // administratorLoginPassword: sqlAdminPassword
     skuName: 'Basic'
     tier: 'Basic'
     allowAzureIPs: false
     publicNetworkAccess: publicNetworkAccess
+    sqlAdminGroupObjectId: sqlAdminGroupObjectId
+    sqlAdminGroupName: sqlAdminGroupName
   }
   dependsOn: [
     vnet
