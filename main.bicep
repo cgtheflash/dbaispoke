@@ -14,11 +14,29 @@ param environment string = 'dev'
 
 @description('App Service SKU')
 @allowed([
-  'P0v3'
-  'P1v3'
-  'P1mv3'
+  'F1'
+  'D1'
+  'B1'
+  'B2'
+  'B3'
+  'S1'
+  'S2'
+  'S3'
+  'P1'
+  'P2'
+  'P3'
+  'P4'
 ])
-param appServiceSku string = 'P1v3'
+param appServiceSku string = 'P1'
+
+@description('The runtime stack of the app')
+@allowed([
+  '.net'
+  'php'
+  'node'
+  'html'
+])
+param language string = '.net'
 
 @description('Tags for all resources')
 param tags object = {
@@ -279,17 +297,6 @@ module vnet 'artifacts/vnet.bicep' = {
   ]
 }
 
-// Create App Service Plan
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: '${prefix}-asp'
-  location: resourceGroup().location
-  tags: tags
-  sku: {
-    name: appServiceSku
-    tier: 'PremiumV2'
-  }
-}
-
 // Create App Service
 module appService 'artifacts/appservice.bicep' = {
   name: 'appservice-deployment'
@@ -297,12 +304,10 @@ module appService 'artifacts/appservice.bicep' = {
     name: '${prefix}-app'
     location: resourceGroup().location
     tags: tags
-    hostingPlanName: appServicePlan.name
-    serverFarmResourceGroup: resourceGroup().name
-    subscriptionId: subscription().subscriptionId
-    currentStack: windowsDotnetVersion
+    sku: appServiceSku
+    language: language
     netFrameworkVersion: netFrameworkVersion
-    publicNetworkAccess: publicNetworkAccess
+    windowsDotnetVersion: windowsDotnetVersion
   }
   dependsOn: [
     vnet

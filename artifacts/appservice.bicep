@@ -1,32 +1,37 @@
-@description('Name of the App Service')
+@description('Web app name')
+@minLength(2)
 param name string
 
-@description('Location for resources')
-param location string
+@description('Location for all resources')
+param location string = resourceGroup().location
 
-@description('Hosting Plan Name')
-param hostingPlanName string
+@description('App Service Plan SKU')
+@allowed([
+  'F1'
+  'D1'
+  'B1'
+  'B2'
+  'B3'
+  'S1'
+  'S2'
+  'S3'
+  'P1'
+  'P2'
+  'P3'
+  'P4'
+])
+param sku string = 'P1'
 
-@description('Server Farm Resource Group')
-param serverFarmResourceGroup string
+@description('The runtime stack of the app')
+@allowed([
+  '.net'
+  'php'
+  'node'
+  'html'
+])
+param language string = '.net'
 
-@description('Subscription ID')
-param subscriptionId string
-
-@description('Always On setting')
-param alwaysOn bool = true
-
-@description('FTPS State')
-@allowed(['FtpsOnly', 'Disabled'])
-param ftpsState string = 'Disabled'
-
-@description('Current Stack')
-param currentStack string = 'dotnet'
-
-@description('PHP Version')
-param phpVersion string = 'OFF'
-
-@description('.NET Framework Version')
+@description('Runtime stack of the web app')
 @allowed([
   'v4.0'
   'v6.0'
@@ -36,49 +41,71 @@ param phpVersion string = 'OFF'
 ])
 param netFrameworkVersion string = 'v9.0'
 
+@description('Windows .NET runtime version')
+@allowed([
+  'DOTNET|6.0'
+  'DOTNET|7.0'
+  'DOTNET|8.0'
+  'DOTNET|9.0-STS'
+])
+param windowsDotnetVersion string = 'DOTNET|9.0-STS'
+
 @description('Tags for the resources')
 param tags object = {}
 
-@description('Enable public network access')
-@allowed(['Enabled', 'Disabled'])
-param publicNetworkAccess string = 'Enabled'
+var appServicePlanName = 'AppServicePlan-${name}'
+var configReference = {
+  '.net': {
+    comments: '.Net app. No additional configuration needed.'
+    netFrameworkVersion: netFrameworkVersion
+    windowsFxVersion: windowsDotnetVersion
+  }
+  html: {
+    comments: 'HTML app. No additional configuration needed.'
+  }
+  php: {
+    phpVersion: '7.4'
+  }
+  node: {
+    appSettings: [
+      {
+        name: 'WEBSITE_NODE_DEFAULT_VERSION'
+        value: '12.15.0'
+      }
+    ]
+  }
+}
 
-resource appService 'Microsoft.Web/sites@2022-03-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
+  name: appServicePlanName
+  location: location
+  tags: tags
+  sku: {
+    name: sku
+  }
+}
+
+resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
   tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
-    siteConfig: {
-      appSettings: []
-      phpVersion: phpVersion
-      netFrameworkVersion: netFrameworkVersion
-      alwaysOn: alwaysOn
-      ftpsState: ftpsState
-      linuxFxVersion: currentStack
-      windowsFxVersion: currentStack
-    }
-    serverFarmId: resourceId(subscriptionId, serverFarmResourceGroup, 'Microsoft.Web/serverfarms', hostingPlanName)
-    clientAffinityEnabled: true
+    siteConfig: union(configReference[language], {
+      minTlsVersion: '1.2'
+      scmMinTlsVersion: '1.2'
+      ftpsState: 'FtpsOnly'
+      alwaysOn: true
+      http20Enabled: true
+      use32BitWorkerProcess: false
+    })
+    serverFarmId: appServicePlan.id
     httpsOnly: true
-    publicNetworkAccess: publicNetworkAccess
   }
 }
 
-resource scmCredentialPolicy 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-09-01' = {
-  parent: appService
-  name: 'scm'
-  properties: {
-    allow: false
-  }
-}
-
-resource ftpCredentialPolicy 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-09-01' = {
-  parent: appService
-  name: 'ftp'
-  properties: {
-    allow: false
-  }
-}
-
-output appServiceId string = appService.id
-output appServiceName string = appService.name 
+output appServiceId string = webApp.id
+output appServiceName string = webApp.name
+output appServicePlanId string = appServicePlan.id 

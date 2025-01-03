@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "10908306265102369450"
+      "templateHash": "17815984802804436007"
     }
   },
   "parameters": {
@@ -23,14 +23,36 @@
     },
     "appServiceSku": {
       "type": "string",
-      "defaultValue": "P1v3",
+      "defaultValue": "P1",
       "allowedValues": [
-        "P0v3",
-        "P1v3",
-        "P1mv3"
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
       ],
       "metadata": {
         "description": "App Service SKU"
+      }
+    },
+    "language": {
+      "type": "string",
+      "defaultValue": ".net",
+      "allowedValues": [
+        ".net",
+        "php",
+        "node",
+        "html"
+      ],
+      "metadata": {
+        "description": "The runtime stack of the app"
       }
     },
     "tags": {
@@ -152,17 +174,6 @@
     ]
   },
   "resources": [
-    {
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2022-03-01",
-      "name": "[format('{0}-asp', parameters('prefix'))]",
-      "location": "[resourceGroup().location]",
-      "tags": "[parameters('tags')]",
-      "sku": {
-        "name": "[parameters('appServiceSku')]",
-        "tier": "PremiumV2"
-      }
-    },
     {
       "copy": {
         "name": "asgs",
@@ -658,23 +669,17 @@
           "tags": {
             "value": "[parameters('tags')]"
           },
-          "hostingPlanName": {
-            "value": "[format('{0}-asp', parameters('prefix'))]"
+          "sku": {
+            "value": "[parameters('appServiceSku')]"
           },
-          "serverFarmResourceGroup": {
-            "value": "[resourceGroup().name]"
-          },
-          "subscriptionId": {
-            "value": "[subscription().subscriptionId]"
-          },
-          "currentStack": {
-            "value": "[parameters('windowsDotnetVersion')]"
+          "language": {
+            "value": "[parameters('language')]"
           },
           "netFrameworkVersion": {
             "value": "[parameters('netFrameworkVersion')]"
           },
-          "publicNetworkAccess": {
-            "value": "[parameters('publicNetworkAccess')]"
+          "windowsDotnetVersion": {
+            "value": "[parameters('windowsDotnetVersion')]"
           }
         },
         "template": {
@@ -684,70 +689,56 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "5266555741426087309"
+              "templateHash": "14102210656311124978"
             }
           },
           "parameters": {
             "name": {
               "type": "string",
+              "minLength": 2,
               "metadata": {
-                "description": "Name of the App Service"
+                "description": "Web app name"
               }
             },
             "location": {
               "type": "string",
+              "defaultValue": "[resourceGroup().location]",
               "metadata": {
-                "description": "Location for resources"
+                "description": "Location for all resources"
               }
             },
-            "hostingPlanName": {
+            "sku": {
               "type": "string",
-              "metadata": {
-                "description": "Hosting Plan Name"
-              }
-            },
-            "serverFarmResourceGroup": {
-              "type": "string",
-              "metadata": {
-                "description": "Server Farm Resource Group"
-              }
-            },
-            "subscriptionId": {
-              "type": "string",
-              "metadata": {
-                "description": "Subscription ID"
-              }
-            },
-            "alwaysOn": {
-              "type": "bool",
-              "defaultValue": true,
-              "metadata": {
-                "description": "Always On setting"
-              }
-            },
-            "ftpsState": {
-              "type": "string",
-              "defaultValue": "Disabled",
+              "defaultValue": "P1",
               "allowedValues": [
-                "FtpsOnly",
-                "Disabled"
+                "F1",
+                "D1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P4"
               ],
               "metadata": {
-                "description": "FTPS State"
+                "description": "App Service Plan SKU"
               }
             },
-            "currentStack": {
+            "language": {
               "type": "string",
-              "defaultValue": "dotnet",
+              "defaultValue": ".net",
+              "allowedValues": [
+                ".net",
+                "php",
+                "node",
+                "html"
+              ],
               "metadata": {
-                "description": "Current Stack"
-              }
-            },
-            "phpVersion": {
-              "type": "string",
-              "defaultValue": "OFF",
-              "metadata": {
-                "description": "PHP Version"
+                "description": "The runtime stack of the app"
               }
             },
             "netFrameworkVersion": {
@@ -761,7 +752,20 @@
                 "v9.0"
               ],
               "metadata": {
-                "description": ".NET Framework Version"
+                "description": "Runtime stack of the web app"
+              }
+            },
+            "windowsDotnetVersion": {
+              "type": "string",
+              "defaultValue": "DOTNET|9.0-STS",
+              "allowedValues": [
+                "DOTNET|6.0",
+                "DOTNET|7.0",
+                "DOTNET|8.0",
+                "DOTNET|9.0-STS"
+              ],
+              "metadata": {
+                "description": "Windows .NET runtime version"
               }
             },
             "tags": {
@@ -770,62 +774,59 @@
               "metadata": {
                 "description": "Tags for the resources"
               }
-            },
-            "publicNetworkAccess": {
-              "type": "string",
-              "defaultValue": "Enabled",
-              "allowedValues": [
-                "Enabled",
-                "Disabled"
-              ],
-              "metadata": {
-                "description": "Enable public network access"
+            }
+          },
+          "variables": {
+            "appServicePlanName": "[format('AppServicePlan-{0}', parameters('name'))]",
+            "configReference": {
+              ".net": {
+                "comments": ".Net app. No additional configuration needed.",
+                "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
+                "windowsFxVersion": "[parameters('windowsDotnetVersion')]"
+              },
+              "html": {
+                "comments": "HTML app. No additional configuration needed."
+              },
+              "php": {
+                "phpVersion": "7.4"
+              },
+              "node": {
+                "appSettings": [
+                  {
+                    "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                    "value": "12.15.0"
+                  }
+                ]
               }
             }
           },
           "resources": [
+            {
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2022-03-01",
+              "name": "[variables('appServicePlanName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[parameters('sku')]"
+              }
+            },
             {
               "type": "Microsoft.Web/sites",
               "apiVersion": "2022-03-01",
               "name": "[parameters('name')]",
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
               "properties": {
-                "siteConfig": {
-                  "appSettings": [],
-                  "phpVersion": "[parameters('phpVersion')]",
-                  "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
-                  "alwaysOn": "[parameters('alwaysOn')]",
-                  "ftpsState": "[parameters('ftpsState')]",
-                  "linuxFxVersion": "[parameters('currentStack')]",
-                  "windowsFxVersion": "[parameters('currentStack')]"
-                },
-                "serverFarmId": "[resourceId(parameters('subscriptionId'), parameters('serverFarmResourceGroup'), 'Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-                "clientAffinityEnabled": true,
-                "httpsOnly": true,
-                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
-              }
-            },
-            {
-              "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-              "apiVersion": "2022-09-01",
-              "name": "[format('{0}/{1}', parameters('name'), 'scm')]",
-              "properties": {
-                "allow": false
+                "siteConfig": "[union(variables('configReference')[parameters('language')], createObject('minTlsVersion', '1.2', 'scmMinTlsVersion', '1.2', 'ftpsState', 'FtpsOnly', 'alwaysOn', true(), 'http20Enabled', true(), 'use32BitWorkerProcess', false()))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "httpsOnly": true
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-              "apiVersion": "2022-09-01",
-              "name": "[format('{0}/{1}', parameters('name'), 'ftp')]",
-              "properties": {
-                "allow": false
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
               ]
             }
           ],
@@ -837,12 +838,15 @@
             "appServiceName": {
               "type": "string",
               "value": "[parameters('name')]"
+            },
+            "appServicePlanId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
             }
           }
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', format('{0}-asp', parameters('prefix')))]",
         "[resourceId('Microsoft.Resources/deployments', 'vnet-deployment')]"
       ]
     },
