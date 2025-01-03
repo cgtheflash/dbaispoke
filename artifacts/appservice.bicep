@@ -66,18 +66,40 @@ var configReference = {
     comments: '.Net app. No additional configuration needed.'
     netFrameworkVersion: netFrameworkVersion
     windowsFxVersion: windowsDotnetVersion
+    appSettings: [
+      {
+        name: 'WEBSITE_VNET_ROUTE_ALL'
+        value: '1'
+      }
+    ]
   }
   html: {
     comments: 'HTML app. No additional configuration needed.'
+    appSettings: [
+      {
+        name: 'WEBSITE_VNET_ROUTE_ALL'
+        value: '1'
+      }
+    ]
   }
   php: {
     phpVersion: '7.4'
+    appSettings: [
+      {
+        name: 'WEBSITE_VNET_ROUTE_ALL'
+        value: '1'
+      }
+    ]
   }
   node: {
     appSettings: [
       {
         name: 'WEBSITE_NODE_DEFAULT_VERSION'
         value: '12.15.0'
+      }
+      {
+        name: 'WEBSITE_VNET_ROUTE_ALL'
+        value: '1'
       }
     ]
   }

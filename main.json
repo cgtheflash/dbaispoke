@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "5510817326841122108"
+      "templateHash": "15856100154400834688"
     }
   },
   "parameters": {
@@ -695,7 +695,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "14655041222989797059"
+              "templateHash": "11983840178076619366"
             }
           },
           "parameters": {
@@ -805,19 +805,41 @@
               ".net": {
                 "comments": ".Net app. No additional configuration needed.",
                 "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
-                "windowsFxVersion": "[parameters('windowsDotnetVersion')]"
+                "windowsFxVersion": "[parameters('windowsDotnetVersion')]",
+                "appSettings": [
+                  {
+                    "name": "WEBSITE_VNET_ROUTE_ALL",
+                    "value": "1"
+                  }
+                ]
               },
               "html": {
-                "comments": "HTML app. No additional configuration needed."
+                "comments": "HTML app. No additional configuration needed.",
+                "appSettings": [
+                  {
+                    "name": "WEBSITE_VNET_ROUTE_ALL",
+                    "value": "1"
+                  }
+                ]
               },
               "php": {
-                "phpVersion": "7.4"
+                "phpVersion": "7.4",
+                "appSettings": [
+                  {
+                    "name": "WEBSITE_VNET_ROUTE_ALL",
+                    "value": "1"
+                  }
+                ]
               },
               "node": {
                 "appSettings": [
                   {
                     "name": "WEBSITE_NODE_DEFAULT_VERSION",
                     "value": "12.15.0"
+                  },
+                  {
+                    "name": "WEBSITE_VNET_ROUTE_ALL",
+                    "value": "1"
                   }
                 ]
               }
