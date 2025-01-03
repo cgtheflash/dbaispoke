@@ -67,15 +67,19 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
       services: {
         blob: {
           enabled: true
+          keyType: 'Account'
         }
         file: {
           enabled: true
+          keyType: 'Account'
         }
         table: {
           enabled: true
+          keyType: 'Account'
         }
         queue: {
           enabled: true
+          keyType: 'Account'
         }
       }
       keySource: 'Microsoft.Storage'
