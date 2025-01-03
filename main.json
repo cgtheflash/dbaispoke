@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "14406433822171988932"
+      "templateHash": "12000924735713101873"
     }
   },
   "parameters": {
@@ -84,7 +84,7 @@
     },
     "integrationSubnetPrefix": {
       "type": "string",
-      "defaultValue": "10.123.6.0/25"
+      "defaultValue": "10.123.5.128/25"
     },
     "defaultRouteNextHopIp": {
       "type": "string",
