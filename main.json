@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "5104634465995180274"
+      "templateHash": "12748699098980177591"
     }
   },
   "parameters": {
@@ -1900,7 +1900,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "5735130788957541911"
+              "templateHash": "4496175709655445036"
             }
           },
           "parameters": {
@@ -2008,8 +2008,18 @@
                   "services": {
                     "blob": {
                       "enabled": true
+                    },
+                    "file": {
+                      "enabled": true
+                    },
+                    "table": {
+                      "enabled": true
+                    },
+                    "queue": {
+                      "enabled": true
                     }
-                  }
+                  },
+                  "keySource": "Microsoft.Storage"
                 }
               }
             }
