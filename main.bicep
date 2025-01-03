@@ -47,6 +47,26 @@ param sqlAdminGroupObjectId string
 @description('Display name of the Azure Entra group for SQL administrators')
 param sqlAdminGroupName string = 'Gameday SQL Administrators'
 
+// Add these parameters near the other app service related parameters
+@description('Runtime stack of the web app')
+@allowed([
+  'v4.0'
+  'v6.0'
+  'v7.0'
+  'v8.0'
+  'v9.0'
+])
+param netFrameworkVersion string = 'v9.0'
+
+@description('Windows .NET runtime version')
+@allowed([
+  'DOTNET|6.0'
+  'DOTNET|7.0'
+  'DOTNET|8.0'
+  'DOTNET|9.0-STS'
+])
+param windowsDotnetVersion string = 'DOTNET|9.0-STS'
+
 // Network configuration
 var vnetName = '${prefix}-vnet'
 var subnets = [
@@ -268,10 +288,6 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
     name: appServiceSku
     tier: 'PremiumV2'
   }
-  kind: 'linux'
-  properties: {
-    reserved: true
-  }
 }
 
 // Create App Service
@@ -281,9 +297,11 @@ module appService 'artifacts/appservice.bicep' = {
     name: '${prefix}-app'
     location: resourceGroup().location
     tags: tags
-    appServicePlanId: appServicePlan.id
-    linuxFxVersion: 'dotnet:6'
-    subnetId: vnet.outputs.subnetIds[2].id  // Use integration subnet (index 2)
+    hostingPlanName: appServicePlan.name
+    serverFarmResourceGroup: resourceGroup().name
+    subscriptionId: subscription().subscriptionId
+    currentStack: windowsDotnetVersion
+    netFrameworkVersion: netFrameworkVersion
     publicNetworkAccess: publicNetworkAccess
   }
   dependsOn: [

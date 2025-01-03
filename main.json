@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "6666800470918407799"
+      "templateHash": "10908306265102369450"
     }
   },
   "parameters": {
@@ -90,6 +90,33 @@
       "metadata": {
         "description": "Display name of the Azure Entra group for SQL administrators"
       }
+    },
+    "netFrameworkVersion": {
+      "type": "string",
+      "defaultValue": "v9.0",
+      "allowedValues": [
+        "v4.0",
+        "v6.0",
+        "v7.0",
+        "v8.0",
+        "v9.0"
+      ],
+      "metadata": {
+        "description": "Runtime stack of the web app"
+      }
+    },
+    "windowsDotnetVersion": {
+      "type": "string",
+      "defaultValue": "DOTNET|9.0-STS",
+      "allowedValues": [
+        "DOTNET|6.0",
+        "DOTNET|7.0",
+        "DOTNET|8.0",
+        "DOTNET|9.0-STS"
+      ],
+      "metadata": {
+        "description": "Windows .NET runtime version"
+      }
     }
   },
   "variables": {
@@ -134,10 +161,6 @@
       "sku": {
         "name": "[parameters('appServiceSku')]",
         "tier": "PremiumV2"
-      },
-      "kind": "linux",
-      "properties": {
-        "reserved": true
       }
     },
     {
@@ -635,14 +658,20 @@
           "tags": {
             "value": "[parameters('tags')]"
           },
-          "appServicePlanId": {
-            "value": "[resourceId('Microsoft.Web/serverfarms', format('{0}-asp', parameters('prefix')))]"
+          "hostingPlanName": {
+            "value": "[format('{0}-asp', parameters('prefix'))]"
           },
-          "linuxFxVersion": {
-            "value": "dotnet:6"
+          "serverFarmResourceGroup": {
+            "value": "[resourceGroup().name]"
           },
-          "subnetId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[2].id]"
+          "subscriptionId": {
+            "value": "[subscription().subscriptionId]"
+          },
+          "currentStack": {
+            "value": "[parameters('windowsDotnetVersion')]"
+          },
+          "netFrameworkVersion": {
+            "value": "[parameters('netFrameworkVersion')]"
           },
           "publicNetworkAccess": {
             "value": "[parameters('publicNetworkAccess')]"
@@ -655,7 +684,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "11986506921962071837"
+              "templateHash": "5266555741426087309"
             }
           },
           "parameters": {
@@ -671,38 +700,68 @@
                 "description": "Location for resources"
               }
             },
-            "appServicePlanId": {
+            "hostingPlanName": {
               "type": "string",
               "metadata": {
-                "description": "App Service Plan ID"
+                "description": "Hosting Plan Name"
               }
             },
-            "linuxFxVersion": {
+            "serverFarmResourceGroup": {
               "type": "string",
+              "metadata": {
+                "description": "Server Farm Resource Group"
+              }
+            },
+            "subscriptionId": {
+              "type": "string",
+              "metadata": {
+                "description": "Subscription ID"
+              }
+            },
+            "alwaysOn": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Always On setting"
+              }
+            },
+            "ftpsState": {
+              "type": "string",
+              "defaultValue": "Disabled",
               "allowedValues": [
-                "dotnet:6",
-                "dotnet:7",
-                "node:14-lts",
-                "node:16-lts",
-                "python:3.9",
-                "python:3.10"
+                "FtpsOnly",
+                "Disabled"
               ],
               "metadata": {
-                "description": "Runtime stack of the web app"
+                "description": "FTPS State"
               }
             },
-            "appSettings": {
-              "type": "array",
-              "defaultValue": [],
-              "metadata": {
-                "description": "App settings for the web app"
-              }
-            },
-            "subnetId": {
+            "currentStack": {
               "type": "string",
-              "defaultValue": "",
+              "defaultValue": "dotnet",
               "metadata": {
-                "description": "Virtual Network subnet ID for integration"
+                "description": "Current Stack"
+              }
+            },
+            "phpVersion": {
+              "type": "string",
+              "defaultValue": "OFF",
+              "metadata": {
+                "description": "PHP Version"
+              }
+            },
+            "netFrameworkVersion": {
+              "type": "string",
+              "defaultValue": "v9.0",
+              "allowedValues": [
+                "v4.0",
+                "v6.0",
+                "v7.0",
+                "v8.0",
+                "v9.0"
+              ],
+              "metadata": {
+                "description": ".NET Framework Version"
               }
             },
             "tags": {
@@ -714,7 +773,7 @@
             },
             "publicNetworkAccess": {
               "type": "string",
-              "defaultValue": "Disabled",
+              "defaultValue": "Enabled",
               "allowedValues": [
                 "Enabled",
                 "Disabled"
@@ -732,18 +791,42 @@
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
               "properties": {
-                "serverFarmId": "[parameters('appServicePlanId')]",
-                "virtualNetworkSubnetId": "[parameters('subnetId')]",
-                "vnetRouteAllEnabled": true,
-                "httpsOnly": true,
                 "siteConfig": {
-                  "linuxFxVersion": "[parameters('linuxFxVersion')]",
-                  "appSettings": "[parameters('appSettings')]",
-                  "alwaysOn": true,
-                  "http20Enabled": true
+                  "appSettings": [],
+                  "phpVersion": "[parameters('phpVersion')]",
+                  "netFrameworkVersion": "[parameters('netFrameworkVersion')]",
+                  "alwaysOn": "[parameters('alwaysOn')]",
+                  "ftpsState": "[parameters('ftpsState')]",
+                  "linuxFxVersion": "[parameters('currentStack')]",
+                  "windowsFxVersion": "[parameters('currentStack')]"
                 },
+                "serverFarmId": "[resourceId(parameters('subscriptionId'), parameters('serverFarmResourceGroup'), 'Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+                "clientAffinityEnabled": true,
+                "httpsOnly": true,
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
               }
+            },
+            {
+              "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/{1}', parameters('name'), 'scm')]",
+              "properties": {
+                "allow": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/{1}', parameters('name'), 'ftp')]",
+              "properties": {
+                "allow": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
+              ]
             }
           ],
           "outputs": {
