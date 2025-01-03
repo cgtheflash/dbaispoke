@@ -48,8 +48,8 @@ param tags object = {
 param prefix string = 'dbgameday'
 param vnetAddressPrefix string = '10.123.4.0/23'
 param appgwSubnetPrefix string = '10.123.4.0/24'
-param peSubnetPrefix string = '10.123.5.0/24'
-param integrationSubnetPrefix string = '10.123.6.0/24'
+param peSubnetPrefix string = '10.123.5.0/25'
+param integrationSubnetPrefix string = '10.123.6.0/25'
 
 // Add parameter for next hop IP
 param defaultRouteNextHopIp string = '10.123.0.4'
