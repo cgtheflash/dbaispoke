@@ -50,6 +50,13 @@ param netFrameworkVersion string = 'v9.0'
 ])
 param windowsDotnetVersion string = 'DOTNET|9.0-STS'
 
+@description('Subnet ID for VNet integration')
+param subnetId string
+
+@description('Enable public network access')
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Disabled'
+
 @description('Tags for the resources')
 param tags object = {}
 
@@ -100,9 +107,22 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
       alwaysOn: true
       http20Enabled: true
       use32BitWorkerProcess: false
+      vnetRouteAllEnabled: true
     })
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    publicNetworkAccess: publicNetworkAccess
+    virtualNetworkSubnetId: subnetId
+  }
+}
+
+// Add VNet integration
+resource networkConfig 'Microsoft.Web/sites/networkConfig@2022-03-01' = {
+  parent: webApp
+  name: 'virtualNetwork'
+  properties: {
+    subnetResourceId: subnetId
+    swiftSupported: true
   }
 }
 

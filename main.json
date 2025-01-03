@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "17815984802804436007"
+      "templateHash": "5510817326841122108"
     }
   },
   "parameters": {
@@ -680,6 +680,12 @@
           },
           "windowsDotnetVersion": {
             "value": "[parameters('windowsDotnetVersion')]"
+          },
+          "subnetId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet-deployment'), '2022-09-01').outputs.subnetIds.value[2].id]"
+          },
+          "publicNetworkAccess": {
+            "value": "[parameters('publicNetworkAccess')]"
           }
         },
         "template": {
@@ -689,7 +695,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "14102210656311124978"
+              "templateHash": "14655041222989797059"
             }
           },
           "parameters": {
@@ -768,6 +774,23 @@
                 "description": "Windows .NET runtime version"
               }
             },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "Subnet ID for VNet integration"
+              }
+            },
+            "publicNetworkAccess": {
+              "type": "string",
+              "defaultValue": "Disabled",
+              "allowedValues": [
+                "Enabled",
+                "Disabled"
+              ],
+              "metadata": {
+                "description": "Enable public network access"
+              }
+            },
             "tags": {
               "type": "object",
               "defaultValue": {},
@@ -821,12 +844,26 @@
                 "type": "SystemAssigned"
               },
               "properties": {
-                "siteConfig": "[union(variables('configReference')[parameters('language')], createObject('minTlsVersion', '1.2', 'scmMinTlsVersion', '1.2', 'ftpsState', 'FtpsOnly', 'alwaysOn', true(), 'http20Enabled', true(), 'use32BitWorkerProcess', false()))]",
+                "siteConfig": "[union(variables('configReference')[parameters('language')], createObject('minTlsVersion', '1.2', 'scmMinTlsVersion', '1.2', 'ftpsState', 'FtpsOnly', 'alwaysOn', true(), 'http20Enabled', true(), 'use32BitWorkerProcess', false(), 'vnetRouteAllEnabled', true()))]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-                "httpsOnly": true
+                "httpsOnly": true,
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                "virtualNetworkSubnetId": "[parameters('subnetId')]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/networkConfig",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/{1}', parameters('name'), 'virtualNetwork')]",
+              "properties": {
+                "subnetResourceId": "[parameters('subnetId')]",
+                "swiftSupported": true
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
               ]
             }
           ],
@@ -1221,7 +1258,6 @@
       ]
     },
     {
-      "condition": "[equals(parameters('publicNetworkAccess'), 'Disabled')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "app-pe-deployment",

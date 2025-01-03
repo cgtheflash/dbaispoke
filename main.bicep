@@ -308,6 +308,8 @@ module appService 'artifacts/appservice.bicep' = {
     language: language
     netFrameworkVersion: netFrameworkVersion
     windowsDotnetVersion: windowsDotnetVersion
+    subnetId: vnet.outputs.subnetIds[2].id  // Integration subnet (index 2)
+    publicNetworkAccess: publicNetworkAccess
   }
   dependsOn: [
     vnet
@@ -354,15 +356,15 @@ module sqlPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkA
 }
 
 // Create Private Endpoint for App Service
-module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = if (publicNetworkAccess == 'Disabled') {
+module appPrivateEndpoint 'artifacts/privateendpoint.bicep' = {
   name: 'app-pe-deployment'
   params: {
     name: '${prefix}-app-pe'
     location: resourceGroup().location
-    subnetId: vnet.outputs.subnetIds[1].id
+    subnetId: vnet.outputs.subnetIds[1].id  // PE subnet (index 1)
     privateConnectResourceId: appService.outputs.appServiceId
     groupId: 'sites'
-    asgIds: [asgs[1].outputs.asgId]
+    asgIds: [asgs[1].outputs.asgId]  // App ASG
   }
   dependsOn: [
     appService
