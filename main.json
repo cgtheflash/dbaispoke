@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "4839436376838617034"
+      "templateHash": "6269585360849764015"
     }
   },
   "parameters": {
@@ -21,20 +21,13 @@
         "description": "Environment name (e.g., prod, dev, qa)"
       }
     },
-    "sqlAdminPassword": {
-      "type": "securestring",
-      "minLength": 12,
-      "metadata": {
-        "description": "SQL Server administrator password"
-      }
-    },
     "appServiceSku": {
       "type": "string",
-      "defaultValue": "P1v2",
+      "defaultValue": "P1v3",
       "allowedValues": [
-        "P1v2",
-        "P2v2",
-        "P3v2"
+        "P0v3",
+        "P1v3",
+        "P1mv3"
       ],
       "metadata": {
         "description": "App Service SKU"
@@ -83,6 +76,19 @@
       ],
       "metadata": {
         "description": "Enable public network access for PaaS services"
+      }
+    },
+    "sqlAdminGroupObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object ID of the Azure Entra group for SQL administrators"
+      }
+    },
+    "sqlAdminGroupName": {
+      "type": "string",
+      "defaultValue": "SQL Administrators",
+      "metadata": {
+        "description": "Display name of the Azure Entra group for SQL administrators"
       }
     }
   },
@@ -299,32 +305,6 @@
                     }
                   ],
                   "destinationPortRange": "443"
-                }
-              },
-              {
-                "name": "allow-azureLoadBalancer",
-                "properties": {
-                  "protocol": "*",
-                  "sourcePortRange": "*",
-                  "destinationPortRange": "*",
-                  "sourceAddressPrefix": "AzureLoadBalancer",
-                  "destinationAddressPrefix": "*",
-                  "access": "Allow",
-                  "priority": 4095,
-                  "direction": "Inbound"
-                }
-              },
-              {
-                "name": "deny-all-inbound",
-                "properties": {
-                  "priority": 4096,
-                  "direction": "Inbound",
-                  "access": "Deny",
-                  "protocol": "*",
-                  "sourceAddressPrefix": "*",
-                  "sourcePortRange": "*",
-                  "destinationAddressPrefix": "*",
-                  "destinationPortRange": "*"
                 }
               }
             ]
@@ -805,12 +785,6 @@
           "tags": {
             "value": "[parameters('tags')]"
           },
-          "administratorLogin": {
-            "value": "sqladmin"
-          },
-          "administratorLoginPassword": {
-            "value": "[parameters('sqlAdminPassword')]"
-          },
           "skuName": {
             "value": "Basic"
           },
@@ -822,6 +796,12 @@
           },
           "publicNetworkAccess": {
             "value": "[parameters('publicNetworkAccess')]"
+          },
+          "sqlAdminGroupObjectId": {
+            "value": "[parameters('sqlAdminGroupObjectId')]"
+          },
+          "sqlAdminGroupName": {
+            "value": "[parameters('sqlAdminGroupName')]"
           }
         },
         "template": {
@@ -831,7 +811,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "1059873290259459769"
+              "templateHash": "6603438227200403181"
             }
           },
           "parameters": {
@@ -851,18 +831,6 @@
               "type": "string",
               "metadata": {
                 "description": "Location for resources"
-              }
-            },
-            "administratorLogin": {
-              "type": "string",
-              "metadata": {
-                "description": "Administrator username for the server"
-              }
-            },
-            "administratorLoginPassword": {
-              "type": "securestring",
-              "metadata": {
-                "description": "Administrator password for the server"
               }
             },
             "skuName": {
@@ -903,6 +871,19 @@
               "metadata": {
                 "description": "Enable public network access"
               }
+            },
+            "sqlAdminGroupObjectId": {
+              "type": "string",
+              "metadata": {
+                "description": "Object ID of the Azure Entra group for SQL administrators"
+              }
+            },
+            "sqlAdminGroupName": {
+              "type": "string",
+              "defaultValue": "SQL Administrators",
+              "metadata": {
+                "description": "Display name of the Azure Entra group for SQL administrators"
+              }
             }
           },
           "resources": [
@@ -913,10 +894,18 @@
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
               "properties": {
-                "administratorLogin": "[parameters('administratorLogin')]",
-                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
                 "version": "12.0",
-                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                "minimalTlsVersion": "1.2",
+                "restrictOutboundNetworkAccess": "Enabled",
+                "administrators": {
+                  "administratorType": "ActiveDirectory",
+                  "principalType": "Group",
+                  "login": "[parameters('sqlAdminGroupName')]",
+                  "sid": "[parameters('sqlAdminGroupObjectId')]",
+                  "tenantId": "[subscription().tenantId]",
+                  "azureADOnlyAuthentication": true
+                }
               }
             },
             {
@@ -1766,7 +1755,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "5304588088254738087"
+              "templateHash": "5341929043136592280"
             }
           },
           "parameters": {
@@ -1863,7 +1852,9 @@
                 "networkAcls": {
                   "defaultAction": "[if(equals(parameters('publicNetworkAccess'), 'Enabled'), 'Allow', 'Deny')]",
                   "bypass": "None"
-                }
+                },
+                "supportsHttpsTrafficOnly": true,
+                "minimumTlsVersion": "TLS1_2"
               }
             }
           ],
