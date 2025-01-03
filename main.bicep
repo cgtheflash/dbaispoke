@@ -52,7 +52,7 @@ param peSubnetPrefix string = '10.123.5.0/24'
 param integrationSubnetPrefix string = '10.123.6.0/24'
 
 // Add parameter for next hop IP
-param defaultRouteNextHopIp string
+param defaultRouteNextHopIp string = '10.123.0.4'
 
 // Add parameters
 @description('Enable public network access for PaaS services')
