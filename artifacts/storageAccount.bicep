@@ -60,6 +60,16 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
     supportsHttpsTrafficOnly: true
     minimumTlsVersion: 'TLS1_2'
     allowCrossTenantReplication: false
+    allowSharedKeyAccess: false
+    allowedCopyScope: 'AAD'
+    encryption: {
+      requireInfrastructureEncryption: true
+      services: {
+        blob: {
+          enabled: true
+        }
+      }
+    }
   }
 }
 
