@@ -5,7 +5,7 @@
   'qa'
   'prod'
 ])
-param environment string = 'dev'
+param environment string = 'prod'
 
 // @description('SQL Server administrator password')
 // @secure()
