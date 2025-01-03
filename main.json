@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "12000924735713101873"
+      "templateHash": "4606679380055065885"
     }
   },
   "parameters": {
@@ -696,7 +696,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.31.92.45157",
-              "templateHash": "11983840178076619366"
+              "templateHash": "4148540877289252388"
             }
           },
           "parameters": {
@@ -871,7 +871,9 @@
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "httpsOnly": true,
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
-                "virtualNetworkSubnetId": "[parameters('subnetId')]"
+                "virtualNetworkSubnetId": "[parameters('subnetId')]",
+                "vnetImagePullEnabled": true,
+                "vnetRouteAllEnabled": true
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"

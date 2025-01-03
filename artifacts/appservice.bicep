@@ -135,6 +135,8 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
     httpsOnly: true
     publicNetworkAccess: publicNetworkAccess
     virtualNetworkSubnetId: subnetId
+    vnetImagePullEnabled: true
+    vnetRouteAllEnabled: true
   }
 }
 
