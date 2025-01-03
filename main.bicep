@@ -28,10 +28,10 @@ param tags object = {
 }
 
 param prefix string = 'dbgameday'
-param vnetAddressPrefix string = '10.0.0.0/16'
-param appgwSubnetPrefix string = '10.0.0.0/24'
-param peSubnetPrefix string = '10.0.1.0/24'
-param integrationSubnetPrefix string = '10.0.2.0/24'
+param vnetAddressPrefix string = '10.123.4.0/23'
+param appgwSubnetPrefix string = '10.123.4.0/24'
+param peSubnetPrefix string = '10.123.5.0/24'
+param integrationSubnetPrefix string = '10.123.6.0/24'
 
 // Add parameter for next hop IP
 param defaultRouteNextHopIp string
@@ -45,7 +45,7 @@ param publicNetworkAccess string = 'Disabled'
 param sqlAdminGroupObjectId string
 
 @description('Display name of the Azure Entra group for SQL administrators')
-param sqlAdminGroupName string = 'SQL Administrators'
+param sqlAdminGroupName string = 'Gameday SQL Administrators'
 
 // Network configuration
 var vnetName = '${prefix}-vnet'

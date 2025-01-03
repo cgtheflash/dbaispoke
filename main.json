@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.31.92.45157",
-      "templateHash": "6269585360849764015"
+      "templateHash": "6666800470918407799"
     }
   },
   "parameters": {
@@ -50,19 +50,19 @@
     },
     "vnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/16"
+      "defaultValue": "10.123.4.0/23"
     },
     "appgwSubnetPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24"
+      "defaultValue": "10.123.4.0/24"
     },
     "peSubnetPrefix": {
       "type": "string",
-      "defaultValue": "10.0.1.0/24"
+      "defaultValue": "10.123.5.0/24"
     },
     "integrationSubnetPrefix": {
       "type": "string",
-      "defaultValue": "10.0.2.0/24"
+      "defaultValue": "10.123.6.0/24"
     },
     "defaultRouteNextHopIp": {
       "type": "string"
@@ -86,7 +86,7 @@
     },
     "sqlAdminGroupName": {
       "type": "string",
-      "defaultValue": "SQL Administrators",
+      "defaultValue": "Gameday SQL Administrators",
       "metadata": {
         "description": "Display name of the Azure Entra group for SQL administrators"
       }
